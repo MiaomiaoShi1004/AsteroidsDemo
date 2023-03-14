@@ -19,14 +19,8 @@ public class AsteroidsApplication extends Application {
     public void start(Stage stage) throws Exception {
         Pane pane = new Pane();
         pane.setPrefSize(600, 400);
-//
-////        present the ship in the screen
-//        Polygon ship = new Polygon(-5, -5, 10, 0, -5, 5);
-//        ship.setTranslateX(300);
-//        ship.setTranslateY(200);
-//
-//        pane.getChildren().add(ship);
 
+//        present the ship in the screen
         Ship ship = new Ship(150, 100);
         pane.getChildren().add(ship.getCharacter());
 
@@ -43,22 +37,15 @@ public class AsteroidsApplication extends Application {
         });
 
 //        move the ship
-//        Point2D movement = new Point2D(1, 0);
-
         new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if(pressedKeys.getOrDefault(KeyCode.LEFT, false)) {
-//                    ship.setRotate(ship.getRotate() - 5);
                     ship.turnLeft();
                 }
-
                 if(pressedKeys.getOrDefault(KeyCode.RIGHT, false)) {
-//                    ship.setRotate(ship.getRotate() + 5);
                     ship.turnRight();
                 }
-
-//                ship.setTranslateX(ship.getTranslateX() + movement.getX());
                 ship.move();
             }
 
