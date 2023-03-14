@@ -22,16 +22,23 @@ public class AsteroidsApplication extends Application {
 
 //        present the ship in the screen
         Ship ship = new Ship(150, 100);
+//        multiple asteroids
+        List<Asteroid> asteroids = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Random rnd = new Random();
+            Asteroid asteroid = new Asteroid(rnd.nextInt(100), rnd.nextInt(100));
+            asteroids.add(asteroid);
+        }
 
 //        present the asteroid in the screen
-        Asteroid asteroid = new Asteroid(50, 50);
+//        Asteroid asteroid = new Asteroid(50, 50);
         pane.getChildren().add(ship.getCharacter());
-        pane.getChildren().add(asteroid.getCharacter());
+        asteroids.forEach(asteroid -> pane.getChildren().add(asteroid.getCharacter()));
+        asteroids.forEach(asteroid -> asteroid.turnLeft());
+        asteroids.forEach(asteroid -> asteroid.turnRight());
+        asteroids.forEach(asteroid -> asteroid.accelerate());
+        asteroids.forEach(asteroid -> asteroid.accelerate());
 
-        asteroid.turnRight();
-        asteroid.turnRight();
-        asteroid.accelerate();
-        asteroid.accelerate();
 
         Scene scene = new Scene(pane);
 
@@ -62,12 +69,14 @@ public class AsteroidsApplication extends Application {
 
                 ship.move();
 //          in order for an asteroid to move
-                asteroid.move();
+                asteroids.forEach(asteroid -> asteroid.move());
 
 //          stops the application if a collision happens
-                if (ship.collide(asteroid)) {
-                    stop();
-                }
+                asteroids.forEach(asteroid -> {
+                    if (ship.collide(asteroid)) {
+                        stop();
+                    }
+                });
             }
 
         }.start();
