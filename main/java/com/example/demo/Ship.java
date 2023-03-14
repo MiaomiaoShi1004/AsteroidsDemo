@@ -38,6 +38,10 @@ public class Ship {
     public void accelerate() {
         double changeX = Math.cos(Math.toRadians(this.character.getRotate()));
         double changeY = Math.sin(Math.toRadians(this.character.getRotate()));
+
+        changeX *= 0.05;
+        changeY *= 0.05;
+
         this.movement = this.movement.add(changeX, changeY);
     }
 
