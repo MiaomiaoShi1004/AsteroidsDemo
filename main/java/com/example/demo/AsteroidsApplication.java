@@ -22,7 +22,16 @@ public class AsteroidsApplication extends Application {
 
 //        present the ship in the screen
         Ship ship = new Ship(150, 100);
+
+//        present the asteroid in the screen
+        Asteroid asteroid = new Asteroid(50, 50);
         pane.getChildren().add(ship.getCharacter());
+        pane.getChildren().add(asteroid.getCharacter());
+
+        asteroid.turnRight();
+        asteroid.turnRight();
+        asteroid.accelerate();
+        asteroid.accelerate();
 
         Scene scene = new Scene(pane);
 
@@ -52,6 +61,8 @@ public class AsteroidsApplication extends Application {
                 }
 
                 ship.move();
+//          in order for an asteroid to move
+                asteroid.move();
             }
 
         }.start();
