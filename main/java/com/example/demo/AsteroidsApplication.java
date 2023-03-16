@@ -31,10 +31,12 @@ public class AsteroidsApplication extends Application {
             Asteroid asteroid = new Asteroid(rnd.nextInt(WIDTH / 3), rnd.nextInt(HEIGHT));
             asteroids.add(asteroid);
         }
-
 //        present the asteroid in the screen
         pane.getChildren().add(ship.getCharacter());
         asteroids.forEach(asteroid -> pane.getChildren().add(asteroid.getCharacter()));
+
+//        multiple projectiles (empty at first)
+        List<Projectile> projectiles = new ArrayList<>();
 
         Scene scene = new Scene(pane);
 
@@ -61,6 +63,16 @@ public class AsteroidsApplication extends Application {
 
                 if(pressedKeys.getOrDefault(KeyCode.UP, false)) {
                     ship.accelerate();
+                }
+
+//???!!!        demo version of shooting -- not sure if I should put this method here
+//              seems working for now
+                if (pressedKeys.getOrDefault(KeyCode.SPACE, false)) {
+                    Projectile projectile = new Projectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
+                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
+                    projectiles.add(projectile);
+
+                    pane.getChildren().add(projectile.getCharacter());
                 }
 
                 ship.move();
