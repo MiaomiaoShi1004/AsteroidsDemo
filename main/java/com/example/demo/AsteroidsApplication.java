@@ -14,19 +14,21 @@ import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
 public class AsteroidsApplication extends Application {
+    public static int WIDTH = 300;
+    public static int HEIGHT = 200;
 
     @Override
     public void start(Stage stage) throws Exception {
         Pane pane = new Pane();
-        pane.setPrefSize(600, 400);
+        pane.setPrefSize(WIDTH, HEIGHT);
 
 //        present the ship in the screen
-        Ship ship = new Ship(150, 100);
+        Ship ship = new Ship(WIDTH / 2, HEIGHT / 2);
 //        multiple asteroids
         List<Asteroid> asteroids = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Random rnd = new Random();
-            Asteroid asteroid = new Asteroid(rnd.nextInt(100), rnd.nextInt(100));
+            Asteroid asteroid = new Asteroid(rnd.nextInt(WIDTH / 3), rnd.nextInt(HEIGHT));
             asteroids.add(asteroid);
         }
 
