@@ -31,14 +31,8 @@ public class AsteroidsApplication extends Application {
         }
 
 //        present the asteroid in the screen
-//        Asteroid asteroid = new Asteroid(50, 50);
         pane.getChildren().add(ship.getCharacter());
         asteroids.forEach(asteroid -> pane.getChildren().add(asteroid.getCharacter()));
-        asteroids.forEach(asteroid -> asteroid.turnLeft());
-        asteroids.forEach(asteroid -> asteroid.turnRight());
-        asteroids.forEach(asteroid -> asteroid.accelerate());
-        asteroids.forEach(asteroid -> asteroid.accelerate());
-
 
         Scene scene = new Scene(pane);
 
