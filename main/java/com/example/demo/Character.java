@@ -21,6 +21,15 @@ public abstract class Character {
         return character;
     }
 
+//  currently the move method of a Character is private, to access to it, add getMovement() and setMovement
+    public Point2D getMovement() {
+        return movement;
+    }
+
+    public void setMovement(Point2D movement) {
+        this.movement = movement;
+    }
+
     public void turnLeft() {
         this.character.setRotate(this.character.getRotate() - 5);
     }
@@ -33,7 +42,7 @@ public abstract class Character {
         this.character.setTranslateX(this.character.getTranslateX() + this.movement.getX());
         this.character.setTranslateY(this.character.getTranslateY() + this.movement.getY());
 
-// make the characters stay on screen
+//  make the characters stay on screen
         if (this.character.getTranslateX() < 0) {
             this.character.setTranslateX(this.character.getTranslateX() + AsteroidsApplication.WIDTH);
         }

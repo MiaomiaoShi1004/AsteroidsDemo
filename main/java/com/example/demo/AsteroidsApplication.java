@@ -2,6 +2,7 @@ package com.example.demo;
 //https://java-programming.mooc.fi/part-14/3-larger-application-asteroids
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -65,19 +66,36 @@ public class AsteroidsApplication extends Application {
                     ship.accelerate();
                 }
 
-//???!!!        demo version of shooting -- not sure if I should put this method here
-//              seems working for now
-                if (pressedKeys.getOrDefault(KeyCode.SPACE, false)) {
+                // press space for shooting
+                // && limit the number of projectiles
+                if (pressedKeys.getOrDefault(KeyCode.SPACE, false) && projectiles.size() < 3) {
+                    // we shoot
                     Projectile projectile = new Projectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
                     projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
                     projectiles.add(projectile);
+
+                    projectile.accelerate();
+                    projectile.setMovement(projectile.getMovement().normalize().multiply(3));
 
                     pane.getChildren().add(projectile.getCharacter());
                 }
 
                 ship.move();
-//          in order for an asteroid to move
+//          asteroid to move
                 asteroids.forEach(asteroid -> asteroid.move());
+//          projectile to move
+                projectiles.forEach(projectile -> projectile.move());
+
+//          projectile hit asteroids
+                projectiles.forEach(projectile -> {
+                    List<Asteroid> collisions = asteroids.stream().filter(asteroid -> asteroid.collide(projectile)).collect(Collectors.toList());
+
+                    collisions.stream().forEach(collided -> {
+                        asteroids.remove(collided);
+                        pane.getChildren().remove(collided.getCharacter());
+                    });
+                });
+
 
 //          stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
