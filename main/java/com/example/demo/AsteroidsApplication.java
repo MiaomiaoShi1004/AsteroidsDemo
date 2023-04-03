@@ -90,7 +90,7 @@ public class AsteroidsApplication extends Application {
                 asteroids.forEach(asteroid -> asteroid.move());
                 projectiles.forEach(projectile -> projectile.move());
 
-                // Modification 1: Using iterator to safely remove collided projectiles and asteroids
+                //  Using iterator to safely remove collided projectiles and asteroids
                 Iterator<Projectile> projectileIterator = projectiles.iterator();
                 while (projectileIterator.hasNext()) {
                     Projectile projectile = projectileIterator.next();
@@ -106,7 +106,7 @@ public class AsteroidsApplication extends Application {
                         }
                     }
 
-                    // Modification 2: Removing collided projectiles
+                    //  Removing collided projectiles
                     if (projectileCollided) {
                         projectileIterator.remove();
                         pane.getChildren().remove(projectile.getCharacter());
