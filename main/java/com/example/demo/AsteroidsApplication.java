@@ -29,9 +29,18 @@ public class AsteroidsApplication extends Application {
         List<Asteroid> asteroids = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Random rnd = new Random();
-            Asteroid asteroid = new Asteroid(rnd.nextInt(WIDTH / 3), rnd.nextInt(HEIGHT));
+            int xPos, yPos;
+
+            do {
+                xPos = rnd.nextInt(WIDTH);
+                yPos = rnd.nextInt(HEIGHT);
+            } while (Math.sqrt(Math.pow(ship.getCharacter().getTranslateX() - xPos, 2)
+                    + Math.pow(ship.getCharacter().getTranslateY() - yPos, 2)) < 50);
+
+            Asteroid asteroid = new Asteroid(xPos, yPos);
             asteroids.add(asteroid);
         }
+
 //        present the asteroid in the screen
         pane.getChildren().add(ship.getCharacter());
         asteroids.forEach(asteroid -> pane.getChildren().add(asteroid.getCharacter()));
@@ -55,21 +64,18 @@ public class AsteroidsApplication extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if(pressedKeys.getOrDefault(KeyCode.LEFT, false)) {
+                if (pressedKeys.getOrDefault(KeyCode.LEFT, false)) {
                     ship.turnLeft();
                 }
-                if(pressedKeys.getOrDefault(KeyCode.RIGHT, false)) {
+                if (pressedKeys.getOrDefault(KeyCode.RIGHT, false)) {
                     ship.turnRight();
                 }
 
-                if(pressedKeys.getOrDefault(KeyCode.UP, false)) {
+                if (pressedKeys.getOrDefault(KeyCode.UP, false)) {
                     ship.accelerate();
                 }
 
-                // press space for shooting
-                // && limit the number of projectiles
                 if (pressedKeys.getOrDefault(KeyCode.SPACE, false) && projectiles.size() < 3) {
-                    // we shoot
                     Projectile projectile = new Projectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
                     projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
                     projectiles.add(projectile);
@@ -81,23 +87,32 @@ public class AsteroidsApplication extends Application {
                 }
 
                 ship.move();
-//          asteroid to move
                 asteroids.forEach(asteroid -> asteroid.move());
-//          projectile to move
                 projectiles.forEach(projectile -> projectile.move());
 
-//          projectile hit asteroids
-                projectiles.forEach(projectile -> {
-                    List<Asteroid> collisions = asteroids.stream().filter(asteroid -> asteroid.collide(projectile)).collect(Collectors.toList());
+                // Modification 1: Using iterator to safely remove collided projectiles and asteroids
+                Iterator<Projectile> projectileIterator = projectiles.iterator();
+                while (projectileIterator.hasNext()) {
+                    Projectile projectile = projectileIterator.next();
 
-                    collisions.stream().forEach(collided -> {
-                        asteroids.remove(collided);
-                        pane.getChildren().remove(collided.getCharacter());
-                    });
-                });
+                    Iterator<Asteroid> asteroidIterator = asteroids.iterator();
+                    boolean projectileCollided = false;
+                    while (asteroidIterator.hasNext()) {
+                        Asteroid asteroid = asteroidIterator.next();
+                        if (asteroid.collide(projectile)) {
+                            projectileCollided = true;
+                            asteroidIterator.remove();
+                            pane.getChildren().remove(asteroid.getCharacter());
+                        }
+                    }
 
+                    // Modification 2: Removing collided projectiles
+                    if (projectileCollided) {
+                        projectileIterator.remove();
+                        pane.getChildren().remove(projectile.getCharacter());
+                    }
+                }
 
-//          stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
                         stop();
