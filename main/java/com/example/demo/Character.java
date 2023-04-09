@@ -5,20 +5,25 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
 public abstract class Character {
+    // The Polygon object represents the object
     private Polygon character;
+    // the Point2D object represents the movement of the object. ( the point2d class has both x and y coordinates.)
     private Point2D movement;
 
     public Character(Polygon polygon, int x, int y) {
         this.character = polygon;
         this.character.setTranslateX(x);
         this.character.setTranslateY(y);
-
         this.movement = new Point2D(0, 0);
-
     }
 
     public Polygon getCharacter() {
         return character;
+    }
+
+    public void SetCharacterXY(int x, int y) {
+        this.character.setTranslateX(x);
+        this.character.setTranslateY(y);
     }
 
 //  currently the move method of a Character is private, to access to it, add getMovement() and setMovement
@@ -59,11 +64,12 @@ public abstract class Character {
 
     }
     public void accelerate() {
+        // converts degrees into radians
         double changeX = Math.cos(Math.toRadians(this.character.getRotate()));
         double changeY = Math.sin(Math.toRadians(this.character.getRotate()));
 
-        changeX *= 0.05;
-        changeY *= 0.05;
+        changeX *= 0.04;
+        changeY *= 0.04;
 
         this.movement = this.movement.add(changeX, changeY);
     }
