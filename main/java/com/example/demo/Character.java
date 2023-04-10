@@ -6,9 +6,9 @@ import javafx.scene.shape.Shape;
 
 public abstract class Character {
     // The Polygon object represents the object
-    private Polygon character;
+    protected Polygon character;
     // the Point2D object represents the movement of the object. ( the point2d class has both x and y coordinates.)
-    private Point2D movement;
+    protected Point2D movement;
 
     public Character(Polygon polygon, int x, int y) {
         this.character = polygon;
@@ -47,7 +47,7 @@ public abstract class Character {
         this.character.setTranslateX(this.character.getTranslateX() + this.movement.getX());
         this.character.setTranslateY(this.character.getTranslateY() + this.movement.getY());
 
-//  make the characters stay on screen
+        //  make the characters stay on screen
         if (this.character.getTranslateX() < 0) {
             this.character.setTranslateX(this.character.getTranslateX() + AsteroidsApplication.WIDTH);
         }
@@ -61,8 +61,8 @@ public abstract class Character {
         if (this.character.getTranslateY() > AsteroidsApplication.HEIGHT) {
             this.character.setTranslateY(this.character.getTranslateY() % AsteroidsApplication.HEIGHT);
         }
-
     }
+
     public void accelerate() {
         // converts degrees into radians
         double changeX = Math.cos(Math.toRadians(this.character.getRotate()));
