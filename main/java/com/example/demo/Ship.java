@@ -58,5 +58,30 @@ public class Ship extends Character{
         }
     }
 
+    // functions for set the ship to a safe location(Without CD)
+    public void safeInitShip(){
+        // Set ship to random but secure position
+        while (true){
+            Boolean secureLocation = true;
+            Random rnd = new Random();
+            int width = rnd.nextInt(WIDTH);
+            int height = rnd.nextInt(HEIGHT);
+            Character characterTest = new Asteroid(width, height);
+            // check the location whether it's safe
+            for (Asteroid asteroid : asteroids){
+                if (characterTest.collide(asteroid)) {
+                    secureLocation = false;
+                    System.out.println("safe place just hits a collision!");
+                }
+            }
+            if (secureLocation == true){
+                // have secure location
+                super.SetCharacterXY(width, height);
+                break;
+            }
+        }
+
+    }
+
 
 }
