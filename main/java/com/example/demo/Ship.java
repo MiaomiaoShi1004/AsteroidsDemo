@@ -21,5 +21,6 @@ public class Ship extends Character{
         changeY *= -0.05;
 
         this.setMovement(this.getMovement().add(changeX, changeY));
+        //test
     }
 }
