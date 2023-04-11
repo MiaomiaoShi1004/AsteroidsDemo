@@ -8,7 +8,7 @@ public abstract class Character {
     private Polygon character;
     private Point2D movement;
 
-    private boolean alive;
+    private boolean alive = true;
 
     public Character(Polygon polygon, int x, int y) {
         this.character = polygon;

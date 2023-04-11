@@ -62,8 +62,10 @@ public class AsteroidsApplication extends Application {
 
 //        move the ship
         new AnimationTimer() {
+            private long lastBullet = 0; //for bullet to not be continuous
             @Override
             public void handle(long now) {
+
                 if (pressedKeys.getOrDefault(KeyCode.LEFT, false)) {
                     ship.turnLeft();
                 }
@@ -75,7 +77,11 @@ public class AsteroidsApplication extends Application {
                     ship.accelerate();
                 }
 
-                if (pressedKeys.getOrDefault(KeyCode.SPACE, false) && projectiles.size() < 3) {
+                if (pressedKeys.getOrDefault(KeyCode.DOWN, false)) {
+                    ship.decelerate();
+                }
+
+                if (pressedKeys.getOrDefault(KeyCode.SPACE, false) && (now - lastBullet > 300_000_000)) {
                     Projectile projectile = new Projectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
                     projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
                     projectiles.add(projectile);
@@ -84,6 +90,7 @@ public class AsteroidsApplication extends Application {
                     projectile.setMovement(projectile.getMovement().normalize().multiply(3));
 
                     pane.getChildren().add(projectile.getCharacter());
+                    lastBullet = now;
                 }
 
                 ship.move();
@@ -111,6 +118,7 @@ public class AsteroidsApplication extends Application {
                         projectileIterator.remove();
                         pane.getChildren().remove(projectile.getCharacter());
                     }
+
                 }
 
                 asteroids.forEach(asteroid -> {
