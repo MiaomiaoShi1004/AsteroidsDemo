@@ -5,8 +5,10 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
 public abstract class Character {
-    private Polygon character;
-    private Point2D movement;
+    // The Polygon object represents the object
+    protected Polygon character;
+    // the Point2D object represents the movement of the object. ( the point2d class has both x and y coordinates.)
+    protected Point2D movement;
 
     private boolean alive = true;
 
@@ -14,13 +16,16 @@ public abstract class Character {
         this.character = polygon;
         this.character.setTranslateX(x);
         this.character.setTranslateY(y);
-
         this.movement = new Point2D(0, 0);
-
     }
 
     public Polygon getCharacter() {
         return character;
+    }
+
+    public void SetCharacterXY(int x, int y) {
+        this.character.setTranslateX(x);
+        this.character.setTranslateY(y);
     }
 
 //  currently the move method of a Character is private, to access to it, add getMovement() and setMovement
@@ -52,7 +57,7 @@ public abstract class Character {
         this.character.setTranslateX(this.character.getTranslateX() + this.movement.getX());
         this.character.setTranslateY(this.character.getTranslateY() + this.movement.getY());
 
-//  make the characters stay on screen
+        //  make the characters stay on screen
         if (this.character.getTranslateX() < 0) {
             this.character.setTranslateX(this.character.getTranslateX() + AsteroidsApplication.WIDTH);
         }
@@ -66,14 +71,15 @@ public abstract class Character {
         if (this.character.getTranslateY() > AsteroidsApplication.HEIGHT) {
             this.character.setTranslateY(this.character.getTranslateY() % AsteroidsApplication.HEIGHT);
         }
-
     }
+
     public void accelerate() {
+        // converts degrees into radians
         double changeX = Math.cos(Math.toRadians(this.character.getRotate()));
         double changeY = Math.sin(Math.toRadians(this.character.getRotate()));
 
-        changeX *= 0.05;
-        changeY *= 0.05;
+        changeX *= 0.04;
+        changeY *= 0.04;
 
         this.movement = this.movement.add(changeX, changeY);
     }
