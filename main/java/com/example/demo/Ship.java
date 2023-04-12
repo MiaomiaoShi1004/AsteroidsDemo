@@ -2,10 +2,12 @@ package com.example.demo;
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
+import javafx.util.Duration;
 
 import java.util.Random;
 
-import static com.example.demo.AsteroidsApplication.*;
+import static com.example.demo.Main.*;
+import static com.example.demo.Game.*;
 
 
 public class Ship extends Character{
@@ -59,8 +61,6 @@ public class Ship extends Character{
         }
     }
 
-
-
     //only ship will decelerate
     public void decelerate() {
         //decelerate the ship towards the direction (the angle)
@@ -74,4 +74,5 @@ public class Ship extends Character{
         this.setMovement(this.getMovement().add(changeX, changeY));
         //test
     }
+
 }

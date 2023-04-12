@@ -28,7 +28,7 @@ public class Alien extends Character{
         this.character.setTranslateX(this.character.getTranslateX() + this.movement.getX());
         this.character.setTranslateY(this.character.getTranslateY() + this.movement.getY());
         // the ship will reset after it travels two times of the x distance
-        if (this.character.getTranslateX() > AsteroidsApplication.WIDTH) {
+        if (this.character.getTranslateX() > Main.WIDTH) {
             this.character.setTranslateX(0);
         }
 

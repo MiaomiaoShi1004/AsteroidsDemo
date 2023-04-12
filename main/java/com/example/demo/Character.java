@@ -59,17 +59,17 @@ public abstract class Character {
 
         //  make the characters stay on screen
         if (this.character.getTranslateX() < 0) {
-            this.character.setTranslateX(this.character.getTranslateX() + AsteroidsApplication.WIDTH);
+            this.character.setTranslateX(this.character.getTranslateX() + Main.WIDTH);
         }
-        if (this.character.getTranslateX() > AsteroidsApplication.WIDTH) {
-            this.character.setTranslateX(this.character.getTranslateX() % AsteroidsApplication.WIDTH);
+        if (this.character.getTranslateX() > Main.WIDTH) {
+            this.character.setTranslateX(this.character.getTranslateX() % Main.WIDTH);
         }
 
         if (this.character.getTranslateY() < 0) {
-            this.character.setTranslateY(this.character.getTranslateX() + AsteroidsApplication.HEIGHT);
+            this.character.setTranslateY(this.character.getTranslateX() + Main.HEIGHT);
         }
-        if (this.character.getTranslateY() > AsteroidsApplication.HEIGHT) {
-            this.character.setTranslateY(this.character.getTranslateY() % AsteroidsApplication.HEIGHT);
+        if (this.character.getTranslateY() > Main.HEIGHT) {
+            this.character.setTranslateY(this.character.getTranslateY() % Main.HEIGHT);
         }
     }
 
@@ -87,6 +87,10 @@ public abstract class Character {
     public boolean collide(Character other){
         Shape collisionArea = Shape.intersect(this.character, other.getCharacter());
         return collisionArea.getBoundsInLocal().getWidth() != -1;
+    }
+    
+    public void addStyleClass(String styleClass) {
+        ((Polygon) this.getCharacter()).getStyleClass().add(styleClass);
     }
 
 }
