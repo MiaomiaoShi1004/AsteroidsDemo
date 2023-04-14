@@ -276,8 +276,7 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-	                // && limit the number of projectiles
-	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
+//	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -288,14 +287,22 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-	                }
+//	                }
 				}
 				
-				// Change the position of the ship based on the acceleration
-				ship.move();
+//				// Change the position of the ship based on the acceleration
+//				ship.move();
 				asteroids.forEach(asteroid -> asteroid.move());
 				projectiles.forEach(projectile -> projectile.move());
                 projectilesAlien.forEach(projectile -> projectile.move());
+
+                //setting lives for the ship
+
+                int shipLife = ship.getLife();
+
+                if(ship.getLife() > 0){
+                    ship.move();
+                }
 				
 				//select a random time to generate alien ship, and make it move
                 Random rnd = new Random();
@@ -349,15 +356,43 @@ public class Game {
                     lastAlienBullet = System.currentTimeMillis();
                 }
 
+                if(ship.collide(alien)){
+                    if (shipLife > 0) {
+                        ship.setLife(shipLife - 1);
+                        String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
+                        System.out.println("Ship life -1, Life left:" + lifeLeft);
+                        ship.hyperSpaceJump(); //put ship in a safe location
+                    }
+                    else {
+                        System.out.println("Game over! You have been hit by alien.");
+                        System.out.println("The Ship have no life left :(");
+                        stop();
+                        timeline.stop();
+                        levelUpTimeline.stop();
+                        timelineScore.stop();
+                        gameOverScreen();
+                    }
+                }
+
                 // stops the application if alien projectile hit ship
                 projectilesAlien.forEach(projectile -> {
                     if (ship.collide(projectile)) {
-                        System.out.println("Game over! You have been hit by alien.");
-                        stop();
-                        timeline.stop();
-						levelUpTimeline.stop();
-						timelineScore.stop();
-						gameOverScreen();
+                        if (shipLife > 0) {
+                            ship.setLife(shipLife - 1);
+                            String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
+                            System.out.println("You have been hit by the alien.");
+                            System.out.println("Ship life -1, Life left:" + lifeLeft);
+                            ship.hyperSpaceJump(); //put ship in a safe location
+                        }
+                        else {
+                            System.out.println("The Ship have no life left :(");
+                            System.out.println("Game over! You have been hit by alien.");
+                            stop();
+                            timeline.stop();
+                            levelUpTimeline.stop();
+                            timelineScore.stop();
+                            gameOverScreen();
+                        }
                     }
                 });
 
@@ -414,12 +449,21 @@ public class Game {
                 // stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
-                    	System.out.print("Collision. Game Over");
-						stop();
-						timeline.stop();
-						levelUpTimeline.stop();
-						timelineScore.stop();
-						gameOverScreen();
+                        if (shipLife > 0) {
+                            ship.setLife(shipLife - 1);
+                            String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
+                            System.out.println("Ship life -1, Life left:" + lifeLeft);
+                            ship.hyperSpaceJump(); //put ship in a safe location
+                        }
+                        else{
+                            System.out.println("The Ship have no life left :(");
+                            System.out.print("Collision. Game Over");
+                            stop();
+                            timeline.stop();
+                            levelUpTimeline.stop();
+                            timelineScore.stop();
+                            gameOverScreen();
+                        }
                     }
                 });
             }

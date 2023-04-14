@@ -12,6 +12,17 @@ import static com.example.demo.Game.*;
 
 public class Ship extends Character{
 
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
+    private int life = 3;
+
+
     // private variables for control the space jump time delay
     private boolean hyperjumpReady;
     private boolean hyperjumping;
@@ -72,7 +83,6 @@ public class Ship extends Character{
         changeY *= -0.05;
 
         this.setMovement(this.getMovement().add(changeX, changeY));
-        //test
     }
 
 }
