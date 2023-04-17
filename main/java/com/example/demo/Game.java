@@ -63,6 +63,11 @@ public class Game {
     	lifeLabel.setText("Life: " + life);
     }
     
+    public void addLife() {
+    	life += 1;
+    	lifeLabel.setText("Life: " + life);
+    }
+    
     public void updateTime() {
     	time += 1;
     	timeLabel.setText("Time: " + time);
@@ -163,8 +168,11 @@ public class Game {
     	
     	
     	// Track time and add 1 to the players score every half second.
-    	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> {
+    	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
     		updateScore();
+    		if(score%10000 == 0) {
+    			addLife();
+    		}
     		}));
         timelineScore.setCycleCount(Timeline.INDEFINITE);
         timelineScore.play();
@@ -183,10 +191,10 @@ public class Game {
 		// Place the score, life and time labels on the pane
 		scoreLabel.setLayoutX(10);
 	    scoreLabel.setLayoutY(10);
-	    lifeLabel.setLayoutX(75);
-	    lifeLabel.setLayoutY(10);
-	    timeLabel.setLayoutX(130);
-	    timeLabel.setLayoutY(10);
+	    lifeLabel.setLayoutX(10);
+	    lifeLabel.setLayoutY(45);
+	    timeLabel.setLayoutX(10);
+	    timeLabel.setLayoutY(80);
 	    scoreLabel.getStyleClass().add("score-label");
 	    lifeLabel.getStyleClass().add("life-label");
 	    timeLabel.getStyleClass().add("time-label");
@@ -391,12 +399,16 @@ public class Game {
 
                 // stops the application if alien projectile hit ship
                 projectilesAlien.forEach(projectile -> {
-                    if (ship.collide(projectile)) {
-                        if(life == 0) {
-                        	life -= 1;
-                        	gameOver();
-                        }
-                    	
+                	if (ship.collide(projectile)) {
+                    	System.out.println("1 Life Lost");
+                    	if(life>=0) {
+                    		restart();
+                    	}
+             
+                    	if(life<0) {
+                    		System.out.println("Life = 0. Game Over.");
+                    		gameOver();
+                    	}
                     }
                 });
 
@@ -452,11 +464,11 @@ public class Game {
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
                     	System.out.println("1 Life Lost");
-                    	if(life>0) {
+                    	if(life>=0) {
                     		restart();
                     	}
              
-                    	if(life==0) {
+                    	if(life<0) {
                     		System.out.println("Life = 0. Game Over.");
                     		gameOver();
                     	}
