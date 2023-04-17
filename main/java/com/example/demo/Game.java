@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TimerTask;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
 import javafx.animation.AnimationTimer;
@@ -58,6 +60,11 @@ public class Game {
     
     public void updateLife() {
     	life -= 1;
+    	lifeLabel.setText("Life: " + life);
+    }
+    
+    public void addLife() {
+    	life += 1;
     	lifeLabel.setText("Life: " + life);
     }
     
@@ -156,11 +163,16 @@ public class Game {
         return numAsteroids;
     }
     
+    
     public void start() throws Exception {
     	
+    	
     	// Track time and add 1 to the players score every half second.
-    	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> {
+    	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
     		updateScore();
+    		if(score%10000 == 0) {
+    			addLife();
+    		}
     		}));
         timelineScore.setCycleCount(Timeline.INDEFINITE);
         timelineScore.play();
@@ -179,10 +191,10 @@ public class Game {
 		// Place the score, life and time labels on the pane
 		scoreLabel.setLayoutX(10);
 	    scoreLabel.setLayoutY(10);
-	    lifeLabel.setLayoutX(75);
-	    lifeLabel.setLayoutY(10);
-	    timeLabel.setLayoutX(130);
-	    timeLabel.setLayoutY(10);
+	    lifeLabel.setLayoutX(10);
+	    lifeLabel.setLayoutY(45);
+	    timeLabel.setLayoutX(10);
+	    timeLabel.setLayoutY(80);
 	    scoreLabel.getStyleClass().add("score-label");
 	    lifeLabel.getStyleClass().add("life-label");
 	    timeLabel.getStyleClass().add("time-label");
@@ -246,6 +258,42 @@ public class Game {
 		
 		// Animation Class - Runs all the animation for the game
 		new AnimationTimer() {
+			
+			public void gameOver() {
+	        	System.out.println("Game over! You have been hit by alien.");
+	            stop();
+	            timeline.stop();
+	    		levelUpTimeline.stop();
+	    		timelineScore.stop();
+	    		gameOverScreen();
+	        }
+			
+			public void restart() {
+				// Have the ship re spawn in a safe area and reduce the life by 1
+				ship.hyperSpaceJump();
+				updateLife();
+				Timer timer = new Timer();
+				ship.addStyleClass("red");
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.removeStyleClass("red");
+				    }
+				}, 100);
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.addStyleClass("red");
+				    }
+				}, 200);
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.removeStyleClass("red");
+				    }
+				}, 300);
+			}
+			
 			private long lastBullet = 0; //for bullet to not be continuous
             double startTime = System.currentTimeMillis(); //set generate alien game start time
             int alienFlag = 0; //a flag for alien ship appearing
@@ -276,7 +324,8 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-//	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
+	                // && limit the number of projectiles
+	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -287,22 +336,14 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-//	                }
+	                }
 				}
 				
-//				// Change the position of the ship based on the acceleration
-//				ship.move();
+				// Change the position of the ship based on the acceleration
+				ship.move();
 				asteroids.forEach(asteroid -> asteroid.move());
 				projectiles.forEach(projectile -> projectile.move());
                 projectilesAlien.forEach(projectile -> projectile.move());
-
-                //setting lives for the ship
-
-                int shipLife = ship.getLife();
-
-                if(ship.getLife() > 0){
-                    ship.move();
-                }
 				
 				//select a random time to generate alien ship, and make it move
                 Random rnd = new Random();
@@ -356,43 +397,18 @@ public class Game {
                     lastAlienBullet = System.currentTimeMillis();
                 }
 
-                if(ship.collide(alien)){
-                    if (shipLife > 0) {
-                        ship.setLife(shipLife - 1);
-                        String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
-                        System.out.println("Ship life -1, Life left:" + lifeLeft);
-                        ship.hyperSpaceJump(); //put ship in a safe location
-                    }
-                    else {
-                        System.out.println("Game over! You have been hit by alien.");
-                        System.out.println("The Ship have no life left :(");
-                        stop();
-                        timeline.stop();
-                        levelUpTimeline.stop();
-                        timelineScore.stop();
-                        gameOverScreen();
-                    }
-                }
-
                 // stops the application if alien projectile hit ship
                 projectilesAlien.forEach(projectile -> {
-                    if (ship.collide(projectile)) {
-                        if (shipLife > 0) {
-                            ship.setLife(shipLife - 1);
-                            String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
-                            System.out.println("You have been hit by the alien.");
-                            System.out.println("Ship life -1, Life left:" + lifeLeft);
-                            ship.hyperSpaceJump(); //put ship in a safe location
-                        }
-                        else {
-                            System.out.println("The Ship have no life left :(");
-                            System.out.println("Game over! You have been hit by alien.");
-                            stop();
-                            timeline.stop();
-                            levelUpTimeline.stop();
-                            timelineScore.stop();
-                            gameOverScreen();
-                        }
+                	if (ship.collide(projectile)) {
+                    	System.out.println("1 Life Lost");
+                    	if(life>=0) {
+                    		restart();
+                    	}
+             
+                    	if(life<0) {
+                    		System.out.println("Life = 0. Game Over.");
+                    		gameOver();
+                    	}
                     }
                 });
 
@@ -427,8 +443,6 @@ public class Game {
                         projectileIterator.remove();
                         pane.getChildren().remove(projectile.getCharacter());
                     }
-
-
                 }
                 
                 // projectile hit Alien
@@ -449,21 +463,15 @@ public class Game {
                 // stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
-                        if (shipLife > 0) {
-                            ship.setLife(shipLife - 1);
-                            String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
-                            System.out.println("Ship life -1, Life left:" + lifeLeft);
-                            ship.hyperSpaceJump(); //put ship in a safe location
-                        }
-                        else{
-                            System.out.println("The Ship have no life left :(");
-                            System.out.print("Collision. Game Over");
-                            stop();
-                            timeline.stop();
-                            levelUpTimeline.stop();
-                            timelineScore.stop();
-                            gameOverScreen();
-                        }
+                    	System.out.println("1 Life Lost");
+                    	if(life>=0) {
+                    		restart();
+                    	}
+             
+                    	if(life<0) {
+                    		System.out.println("Life = 0. Game Over.");
+                    		gameOver();
+                    	}
                     }
                 });
             }
@@ -473,5 +481,3 @@ public class Game {
 		stage.show();
 	}
 }
-
-

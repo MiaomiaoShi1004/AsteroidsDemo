@@ -92,5 +92,9 @@ public abstract class Character {
     public void addStyleClass(String styleClass) {
         ((Polygon) this.getCharacter()).getStyleClass().add(styleClass);
     }
+    
+    public void removeStyleClass(String styleClass) {
+    	((Polygon) this.getCharacter()).getStyleClass().remove(styleClass);
+    }
 
 }
