@@ -60,3 +60,7 @@
 .projectile {
 	-fx-fill: #ffffff;
 }
+
+.red{
+	-fx-fill: red;
+}

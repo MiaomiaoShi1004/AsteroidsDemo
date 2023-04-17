@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TimerTask;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
 import javafx.animation.AnimationTimer;
@@ -156,7 +158,9 @@ public class Game {
         return numAsteroids;
     }
     
+    
     public void start() throws Exception {
+    	
     	
     	// Track time and add 1 to the players score every half second.
     	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> {
@@ -246,6 +250,42 @@ public class Game {
 		
 		// Animation Class - Runs all the animation for the game
 		new AnimationTimer() {
+			
+			public void gameOver() {
+	        	System.out.println("Game over! You have been hit by alien.");
+	            stop();
+	            timeline.stop();
+	    		levelUpTimeline.stop();
+	    		timelineScore.stop();
+	    		gameOverScreen();
+	        }
+			
+			public void restart() {
+				// Have the ship re spawn in a safe area and reduce the life by 1
+				ship.hyperSpaceJump();
+				updateLife();
+				Timer timer = new Timer();
+				ship.addStyleClass("red");
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.removeStyleClass("red");
+				    }
+				}, 100);
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.addStyleClass("red");
+				    }
+				}, 200);
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.removeStyleClass("red");
+				    }
+				}, 300);
+			}
+			
 			private long lastBullet = 0; //for bullet to not be continuous
             double startTime = System.currentTimeMillis(); //set generate alien game start time
             int alienFlag = 0; //a flag for alien ship appearing
@@ -352,12 +392,11 @@ public class Game {
                 // stops the application if alien projectile hit ship
                 projectilesAlien.forEach(projectile -> {
                     if (ship.collide(projectile)) {
-                        System.out.println("Game over! You have been hit by alien.");
-                        stop();
-                        timeline.stop();
-						levelUpTimeline.stop();
-						timelineScore.stop();
-						gameOverScreen();
+                        if(life == 0) {
+                        	life -= 1;
+                        	gameOver();
+                        }
+                    	
                     }
                 });
 
@@ -392,8 +431,6 @@ public class Game {
                         projectileIterator.remove();
                         pane.getChildren().remove(projectile.getCharacter());
                     }
-
-
                 }
                 
                 // projectile hit Alien
@@ -414,12 +451,15 @@ public class Game {
                 // stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
-                    	System.out.print("Collision. Game Over");
-						stop();
-						timeline.stop();
-						levelUpTimeline.stop();
-						timelineScore.stop();
-						gameOverScreen();
+                    	System.out.println("1 Life Lost");
+                    	if(life>0) {
+                    		restart();
+                    	}
+             
+                    	if(life==0) {
+                    		System.out.println("Life = 0. Game Over.");
+                    		gameOver();
+                    	}
                     }
                 });
             }
