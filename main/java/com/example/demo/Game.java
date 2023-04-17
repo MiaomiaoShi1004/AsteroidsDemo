@@ -481,5 +481,3 @@ public class Game {
 		stage.show();
 	}
 }
-
-
