@@ -25,6 +25,9 @@ import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 
 public class Game {
 	
@@ -72,6 +75,15 @@ public class Game {
     	time += 1;
     	timeLabel.setText("Time: " + time);
     }
+
+	private void startBackgroundMusic() {
+		MediaPlayer mediaPlayer;
+		// Start the new music
+		Media backgroundMusic = new Media(getClass().getResource("Asteroidsgame_theme_song.mp3").toExternalForm());
+		mediaPlayer = new MediaPlayer(backgroundMusic);
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		mediaPlayer.play();
+	}
     
     // Takes a number and an empty list of asteroids
     public List<Asteroid> createAsteroids(int numAsteroids, List<Asteroid> asteroids) {
@@ -479,5 +491,6 @@ public class Game {
 		
 		stage.setScene(scene);
 		stage.show();
+		startBackgroundMusic();
 	}
 }
