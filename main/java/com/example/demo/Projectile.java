@@ -7,7 +7,7 @@ public class Projectile extends Character{
 
     private double traveledDistance = 0; //keep track of the distance that projectile travels
     private final double maxDistance = 30; // Set a maximum distance the projectile can travel
-
+    private int lives;
 
     public Projectile(int x, int y) {
         super(new Polygon(2, -2, 2, 2, -2, 2, -2, -2), x, y);
@@ -22,5 +22,12 @@ public class Projectile extends Character{
         if (this.traveledDistance >= this.maxDistance) {
             this.setAlive(false);
         }
+    }
+    public void setLives(int live){
+        this.lives = live;
+    }
+    public int getLives() {return this.lives;}
+    public void loselife(){
+        this.lives--;
     }
 }

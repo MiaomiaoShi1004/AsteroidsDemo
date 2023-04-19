@@ -15,13 +15,24 @@ public class Ship extends Character{
     // private variables for control the space jump time delay
     private boolean hyperjumpReady;
     private boolean hyperjumping;
+    private int lives;
 
     public Ship(int x, int y) {
         super(new Polygon(-5, -5, 10, 0, -5, 5),x, y);
         this.hyperjumpReady = true;
         this.hyperjumping = false;
     }
-
+    public void setXY(double x, double y){
+        this.getCharacter().setTranslateX(x);
+        this.getCharacter().setTranslateY(y);
+    }
+    public int getLives() {return this.lives;}
+    public void losslive(){
+        this.lives--;
+    }
+    public void setLives(int live){
+        this.lives = live;
+    }
     public void hyperSpaceJump(){
         if (hyperjumpReady && !hyperjumping) {
             // Set hyperjump flag and reset ready flag
@@ -34,7 +45,7 @@ public class Ship extends Character{
                 Random rnd = new Random();
                 int width = rnd.nextInt(WIDTH);
                 int height = rnd.nextInt(HEIGHT);
-                Character characterTest = new Asteroid(width, height);
+                Character characterTest = new Asteroid(rnd.nextInt(3)+1, width, height);
                 // check the location whether it's safe
                 for (Asteroid asteroid : asteroids){
                     if (characterTest.collide(asteroid)) {
