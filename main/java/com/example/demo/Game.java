@@ -336,8 +336,7 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-	                // && limit the number of projectiles
-	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
+
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -348,7 +347,7 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-	                }
+
 				}
 				
 				// Change the position of the ship based on the acceleration
