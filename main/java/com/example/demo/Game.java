@@ -27,6 +27,12 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import java.net.URL;
+import javafx.application.Platform;
+
+
+
 
 
 public class Game {
@@ -75,9 +81,9 @@ public class Game {
     	time += 1;
     	timeLabel.setText("Time: " + time);
     }
+	private	MediaPlayer mediaPlayer;
 
 	private void startBackgroundMusic() {
-		MediaPlayer mediaPlayer;
 		// Start the new music
 		Media backgroundMusic = new Media(getClass().getResource("Asteroidsgame_theme_song.mp3").toExternalForm());
 		mediaPlayer = new MediaPlayer(backgroundMusic);
@@ -135,7 +141,7 @@ public class Game {
 	    Label playAgain = new Label("Woud you like to play again?");
 	    playAgain.getStyleClass().add("restart-label");
 	    
-	    // Create a Button to re play the game
+	    // Create a Button to replay the game
 	    Button playAgainButton = new Button("Play Again");
 	    playAgainButton.setOnAction(e -> {
 	        try {
@@ -488,9 +494,9 @@ public class Game {
                 });
             }
 		}.start();
-		
+
+		startBackgroundMusic();
 		stage.setScene(scene);
 		stage.show();
-		startBackgroundMusic();
 	}
 }
