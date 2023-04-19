@@ -44,6 +44,7 @@ public class Game {
     private Ship ship;
     private Alien alien;
     private Projectile projectile;
+    private boolean hasCollided = false;
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
     
@@ -305,6 +306,7 @@ public class Game {
 			
 			public void restart() {
 				// Have the ship re spawn in a safe area and reduce the life by 1
+				hasCollided = false;
 				ship.hyperSpaceJump();
 				updateLife();
 				Timer timer = new Timer();
@@ -436,12 +438,12 @@ public class Game {
                 projectilesAlien.forEach(projectile -> {
                 	if (ship.collide(projectile)) {
                     	System.out.println("1 Life Lost");
-                    	if(life>=0) {
+                    	if(life>0) {
                     		restart();
                     	}
              
-                    	if(life<0) {
-                    		System.out.println("Life = 0. Game Over.");
+                    	if(life==0) {
+                    		System.out.println("Last life lost. Game Over.");
                     		gameOver();
                     	}
                     }
@@ -498,15 +500,21 @@ public class Game {
                 // stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
-                    	System.out.println("1 Life Lost");
-                    	if(life>=0) {
-                    		restart();
+                    	// collided flag added to stop multiple lives being lost during a single collision
+                    	if(!hasCollided) {
+                    		System.out.println("1 Life Lost");
+                    		hasCollided = true;
+                        	if(life>0) {
+                        		restart();
+                        	}
                     	}
-             
-                    	if(life<0) {
-                    		System.out.println("Life = 0. Game Over.");
+            
+                    	if(life==0) {
+                    		System.out.println("Last life lost. Game Over.");
                     		gameOver();
                     	}
+                    } else {
+                    	hasCollided = false;
                     }
                 });
             }
