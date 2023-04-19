@@ -17,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.shape.Polygon;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -49,6 +50,7 @@ public class Game {
     private Ship ship;
     private Alien alien;
     private Projectile projectile;
+    private boolean hasCollided = false;
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
     
@@ -126,42 +128,65 @@ public class Game {
     }
     
     public void gameOverScreen() {
-    	// Create a VBox for the start screen
-	    VBox gameOver = new VBox(10);
-	    gameOver.setPrefSize(Main.WIDTH, Main.HEIGHT);
-	    gameOver.getStyleClass().add("start-screen");
+        HighScore highScore = new HighScore();
+        highScore.updateHighScores(playerName, score);
 
-	    // Create a Label for the title of the game
-	    Label titleLabel = new Label("Game Over");
-	    titleLabel.getStyleClass().add("title-label");
-	    
-	    Label scoreLabel = new Label(playerName + " your score was = " + score);
-	    scoreLabel.getStyleClass().add("score-label");
-	    
-	    Label playAgain = new Label("Woud you like to play again?");
-	    playAgain.getStyleClass().add("restart-label");
-	    
-	    // Create a Button to replay the game
-	    Button playAgainButton = new Button("Play Again");
-	    playAgainButton.setOnAction(e -> {
-	        try {
-	            Main.startGame(playerName);
-	        } catch (Exception ex) {
-	            ex.printStackTrace();
-	        }
-	    });
-	    playAgainButton.getStyleClass().add("start-button");
-	     
-	    gameOver.getChildren().addAll(titleLabel, scoreLabel, playAgain, playAgainButton);
-	    
-	    Scene endScene = new Scene(gameOver);
-    	endScene.getStylesheets().add(css);
-    	stage.setTitle("Game Over");
-	    stage.setScene(endScene);
-	    stage.show();
+        HBox layout = new HBox(10);
+        layout.setPrefSize(Main.WIDTH, Main.HEIGHT);
+        layout.getStyleClass().add("layout");
 
+        VBox gameOver = new VBox(10);
+        gameOver.getStyleClass().add("game-over");
+
+        VBox highScoreBox = new VBox(10);
+        highScoreBox.getStyleClass().add("high-score-box");
+
+        Label titleLabel = new Label("Game Over");
+        titleLabel.getStyleClass().add("title-label");
+
+        Label scoreLabel = new Label(playerName + " your score was = " + score);
+        scoreLabel.getStyleClass().add("gm-score-label");
+
+        Label playAgain = new Label("Would you like to play again?");
+        playAgain.getStyleClass().add("restart-label");
+
+        // Create a Button to re-play the game
+        Button playAgainButton = new Button("Play Again");
+        playAgainButton.setOnAction(e -> {
+            try {
+                Main.startGame(playerName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        playAgainButton.getStyleClass().add("start-button");
+
+        // Add game over content to the gameOver VBox
+        gameOver.getChildren().addAll(titleLabel, scoreLabel, playAgain, playAgainButton);
+
+        Label highScoreLabel = new Label("High Scores");
+        highScoreLabel.getStyleClass().add("high-score-label");
+
+        VBox highScoreList = new VBox(2);
+        for (PlayerScore entry : highScore.getHighScores()) {
+            Label entryLabel = new Label(entry.getPlayerName() + " : " + entry.getScore());
+            entryLabel.getStyleClass().add("high-score-entry");
+            highScoreList.getChildren().add(entryLabel);
+        }
+
+        // Add high scores to the highScoreBox VBox
+        highScoreBox.getChildren().addAll(highScoreLabel, highScoreList);
+
+        // Add the game over and high score VBox elements to the layout HBox
+        layout.getChildren().addAll(gameOver, highScoreBox);
+
+        Scene endScene = new Scene(layout);
+        endScene.getStylesheets().add(css);
+        stage.setTitle("Game Over");
+        stage.setScene(endScene);
+        stage.show();
     }
-    
+
     public int levelUpAsteroidCount(int numAsteroids, List<Asteroid> asteroids) {
     	
     	// Increase the asteroids by 25% each level
@@ -184,8 +209,7 @@ public class Game {
     
     public void start() throws Exception {
     	
-    	
-    	// Track time and add 1 to the players score every half second.
+    	// Track time and add 1 to the players score every 0.01 second.
     	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
     		updateScore();
     		if(score%10000 == 0) {
@@ -288,6 +312,7 @@ public class Game {
 			
 			public void restart() {
 				// Have the ship re spawn in a safe area and reduce the life by 1
+				hasCollided = false;
 				ship.hyperSpaceJump();
 				updateLife();
 				Timer timer = new Timer();
@@ -419,12 +444,12 @@ public class Game {
                 projectilesAlien.forEach(projectile -> {
                 	if (ship.collide(projectile)) {
                     	System.out.println("1 Life Lost");
-                    	if(life>=0) {
+                    	if(life>0) {
                     		restart();
                     	}
              
-                    	if(life<0) {
-                    		System.out.println("Life = 0. Game Over.");
+                    	if(life==0) {
+                    		System.out.println("Last life lost. Game Over.");
                     		gameOver();
                     	}
                     }
@@ -481,15 +506,21 @@ public class Game {
                 // stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
-                    	System.out.println("1 Life Lost");
-                    	if(life>=0) {
-                    		restart();
+                    	// collided flag added to stop multiple lives being lost during a single collision
+                    	if(!hasCollided) {
+                    		System.out.println("1 Life Lost");
+                    		hasCollided = true;
+                        	if(life>0) {
+                        		restart();
+                        	}
                     	}
-             
-                    	if(life<0) {
-                    		System.out.println("Life = 0. Game Over.");
+
+                    	if(life==0) {
+                    		System.out.println("Last life lost. Game Over.");
                     		gameOver();
                     	}
+                    } else {
+                    	hasCollided = false;
                     }
                 });
             }
