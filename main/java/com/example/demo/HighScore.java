@@ -23,7 +23,7 @@ public class HighScore {
                 highScores.add(new PlayerScore(playerName, score));
             }
         } catch (IOException e) {
-            // Handle exception
+        	System.out.printf("Error writing to high score file", e);
         }
 
         // Sort the high scores list
@@ -47,7 +47,7 @@ public class HighScore {
                     bw.write(entry.getPlayerName() + " " + entry.getScore() + "\n");
                 }
             } catch (IOException e) {
-                // Handle exception
+            	System.out.printf("Error writing to high score file", e);
             }
         }
     }
