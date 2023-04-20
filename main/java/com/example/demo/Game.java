@@ -477,9 +477,10 @@ public class Game {
                     }
                 }
 */
+
                 // Using iterator to safely remove collided projectiles and asteroids
-                Iterator<Projectile> projectileIterator = projectiles.iterator();
-                while (projectileIterator.hasNext()) {
+/**                 Iterator<Projectile> projectileIterator = projectiles.iterator();
+               while (projectileIterator.hasNext()) {
                     Projectile projectile = projectileIterator.next();
 
                     Iterator<Asteroid> asteroidIterator = asteroids.iterator();
@@ -501,6 +502,7 @@ public class Game {
 
                         // Removing the collided asteroid
                         if (asteroidToRemove != null) {
+                            System.out.println("My size" + asteroidToRemove.getPentagonSize());
                             asteroidIterator.remove();
                             pane.getChildren().remove(asteroidToRemove.getCharacter());
 
@@ -515,6 +517,55 @@ public class Game {
                         }
                     }
                 }
+*/
+
+                Iterator<Projectile> projectileIterator = projectiles.iterator();
+                while (projectileIterator.hasNext()) {
+                    Projectile projectile = projectileIterator.next();
+
+                    Iterator<Asteroid> asteroidIterator = asteroids.iterator();
+                    Asteroid asteroidToRemove = null;
+                    boolean projectileCollided = false;
+                    while (asteroidIterator.hasNext()) {
+                        Asteroid asteroid = asteroidIterator.next();
+                        if (asteroid.collide(projectile)) {
+                            projectileCollided = true;
+                            asteroidToRemove = asteroid;
+                            break;
+                        }
+                    }
+
+                    if (projectileCollided) {
+                        projectileIterator.remove();
+                        pane.getChildren().remove(projectile.getCharacter());
+
+                        if (asteroidToRemove != null) {
+                            double currPentagonSize = asteroidToRemove.getPentagonSize();
+                            asteroidIterator.remove();
+                            pane.getChildren().remove(asteroidToRemove.getCharacter());
+
+                            if (currPentagonSize == 30) {
+                                for (int i = 0; i < 2; i++) {
+                                    Asteroid split20 = new Asteroid(20, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
+                                    asteroids.add(split20);
+                                    split20.addStyleClass("asteroid");
+                                    pane.getChildren().add(split20.getCharacter());
+                                    split20.move();
+                                }
+                            } else if (currPentagonSize == 20) {
+                                for (int i = 0; i < 2; i++) {
+                                    Asteroid split10 = new Asteroid(10, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
+                                    asteroids.add(split10);
+                                    split10.addStyleClass("asteroid");
+                                    pane.getChildren().add(split10.getCharacter());
+                                    split10.move();
+                                }
+                            }
+                            // If pentagonSize is 10, the asteroid will just disappear without creating new ones
+                        }
+                    }
+                }
+
 
                 // projectile hit Alien
                 projectiles.forEach(projectile -> {
