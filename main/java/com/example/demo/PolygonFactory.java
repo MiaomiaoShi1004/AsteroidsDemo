@@ -6,10 +6,8 @@ import java.util.Random;
 
 // class is used to adding variation to the size of the asteroids and the locations of asteroids corners.
 public class PolygonFactory {
-    public Polygon createPolygon() {
+    public Polygon createPolygon(double size) {
         Random rnd = new Random();
-
-        double size = 10 + rnd.nextInt(10);
 
         Polygon polygon = new Polygon();
         double c1 = Math.cos(Math.PI * 2 / 5);
