@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.TimerTask;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
 import javafx.animation.AnimationTimer;
@@ -15,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.shape.Polygon;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,6 +26,15 @@ import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import java.net.URL;
+import javafx.application.Platform;
+
+
+
+
 
 public class Game {
 	
@@ -38,6 +50,7 @@ public class Game {
     private Ship ship;
     private Alien alien;
     private Projectile projectile;
+    private boolean hasCollided = false;
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
     
@@ -61,10 +74,24 @@ public class Game {
     	lifeLabel.setText("Life: " + life);
     }
     
+    public void addLife() {
+    	life += 1;
+    	lifeLabel.setText("Life: " + life);
+    }
+    
     public void updateTime() {
     	time += 1;
     	timeLabel.setText("Time: " + time);
     }
+	private	MediaPlayer mediaPlayer;
+
+	private void startBackgroundMusic() {
+		// Start the new music
+		Media backgroundMusic = new Media(getClass().getResource("Asteroidsgame_theme_song.mp3").toExternalForm());
+		mediaPlayer = new MediaPlayer(backgroundMusic);
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+		mediaPlayer.play();
+	}
     
     // Takes a number and an empty list of asteroids
     public List<Asteroid> createAsteroids(int numAsteroids, List<Asteroid> asteroids) {
@@ -101,42 +128,65 @@ public class Game {
     }
     
     public void gameOverScreen() {
-    	// Create a VBox for the start screen
-	    VBox gameOver = new VBox(10);
-	    gameOver.setPrefSize(Main.WIDTH, Main.HEIGHT);
-	    gameOver.getStyleClass().add("start-screen");
+        HighScore highScore = new HighScore();
+        highScore.updateHighScores(playerName, score);
 
-	    // Create a Label for the title of the game
-	    Label titleLabel = new Label("Game Over");
-	    titleLabel.getStyleClass().add("title-label");
-	    
-	    Label scoreLabel = new Label(playerName + " your score was = " + score);
-	    scoreLabel.getStyleClass().add("score-label");
-	    
-	    Label playAgain = new Label("Woud you like to play again?");
-	    playAgain.getStyleClass().add("restart-label");
-	    
-	    // Create a Button to re play the game
-	    Button playAgainButton = new Button("Play Again");
-	    playAgainButton.setOnAction(e -> {
-	        try {
-	            Main.startGame(playerName);
-	        } catch (Exception ex) {
-	            ex.printStackTrace();
-	        }
-	    });
-	    playAgainButton.getStyleClass().add("start-button");
-	     
-	    gameOver.getChildren().addAll(titleLabel, scoreLabel, playAgain, playAgainButton);
-	    
-	    Scene endScene = new Scene(gameOver);
-    	endScene.getStylesheets().add(css);
-    	stage.setTitle("Game Over");
-	    stage.setScene(endScene);
-	    stage.show();
+        HBox layout = new HBox(10);
+        layout.setPrefSize(Main.WIDTH, Main.HEIGHT);
+        layout.getStyleClass().add("layout");
 
+        VBox gameOver = new VBox(10);
+        gameOver.getStyleClass().add("game-over");
+
+        VBox highScoreBox = new VBox(10);
+        highScoreBox.getStyleClass().add("high-score-box");
+
+        Label titleLabel = new Label("Game Over");
+        titleLabel.getStyleClass().add("title-label");
+
+        Label scoreLabel = new Label(playerName + " your score was = " + score);
+        scoreLabel.getStyleClass().add("gm-score-label");
+
+        Label playAgain = new Label("Would you like to play again?");
+        playAgain.getStyleClass().add("restart-label");
+
+        // Create a Button to re-play the game
+        Button playAgainButton = new Button("Play Again");
+        playAgainButton.setOnAction(e -> {
+            try {
+                Main.startGame(playerName);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        playAgainButton.getStyleClass().add("start-button");
+
+        // Add game over content to the gameOver VBox
+        gameOver.getChildren().addAll(titleLabel, scoreLabel, playAgain, playAgainButton);
+
+        Label highScoreLabel = new Label("High Scores");
+        highScoreLabel.getStyleClass().add("high-score-label");
+
+        VBox highScoreList = new VBox(2);
+        for (PlayerScore entry : highScore.getHighScores()) {
+            Label entryLabel = new Label(entry.getPlayerName() + " : " + entry.getScore());
+            entryLabel.getStyleClass().add("high-score-entry");
+            highScoreList.getChildren().add(entryLabel);
+        }
+
+        // Add high scores to the highScoreBox VBox
+        highScoreBox.getChildren().addAll(highScoreLabel, highScoreList);
+
+        // Add the game over and high score VBox elements to the layout HBox
+        layout.getChildren().addAll(gameOver, highScoreBox);
+
+        Scene endScene = new Scene(layout);
+        endScene.getStylesheets().add(css);
+        stage.setTitle("Game Over");
+        stage.setScene(endScene);
+        stage.show();
     }
-    
+
     public int levelUpAsteroidCount(int numAsteroids, List<Asteroid> asteroids) {
     	
     	// Increase the asteroids by 25% each level
@@ -156,11 +206,15 @@ public class Game {
         return numAsteroids;
     }
     
+    
     public void start() throws Exception {
     	
-    	// Track time and add 1 to the players score every half second.
-    	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> {
+    	// Track time and add 1 to the players score every 0.01 second.
+    	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
     		updateScore();
+    		if(score%10000 == 0) {
+    			addLife();
+    		}
     		}));
         timelineScore.setCycleCount(Timeline.INDEFINITE);
         timelineScore.play();
@@ -179,10 +233,10 @@ public class Game {
 		// Place the score, life and time labels on the pane
 		scoreLabel.setLayoutX(10);
 	    scoreLabel.setLayoutY(10);
-	    lifeLabel.setLayoutX(75);
-	    lifeLabel.setLayoutY(10);
-	    timeLabel.setLayoutX(130);
-	    timeLabel.setLayoutY(10);
+	    lifeLabel.setLayoutX(10);
+	    lifeLabel.setLayoutY(45);
+	    timeLabel.setLayoutX(10);
+	    timeLabel.setLayoutY(80);
 	    scoreLabel.getStyleClass().add("score-label");
 	    lifeLabel.getStyleClass().add("life-label");
 	    timeLabel.getStyleClass().add("time-label");
@@ -246,6 +300,43 @@ public class Game {
 		
 		// Animation Class - Runs all the animation for the game
 		new AnimationTimer() {
+			
+			public void gameOver() {
+	        	System.out.println("Game over! You have been hit by alien.");
+	            stop();
+	            timeline.stop();
+	    		levelUpTimeline.stop();
+	    		timelineScore.stop();
+	    		gameOverScreen();
+	        }
+			
+			public void restart() {
+				// Have the ship re spawn in a safe area and reduce the life by 1
+				hasCollided = false;
+				ship.hyperSpaceJump();
+				updateLife();
+				Timer timer = new Timer();
+				ship.addStyleClass("red");
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.removeStyleClass("red");
+				    }
+				}, 100);
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.addStyleClass("red");
+				    }
+				}, 200);
+				timer.schedule(new TimerTask() {
+				    @Override
+				    public void run() {
+				        ship.removeStyleClass("red");
+				    }
+				}, 300);
+			}
+			
 			private long lastBullet = 0; //for bullet to not be continuous
             double startTime = System.currentTimeMillis(); //set generate alien game start time
             int alienFlag = 0; //a flag for alien ship appearing
@@ -276,7 +367,7 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-//	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
+
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -287,22 +378,14 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-//	                }
+
 				}
 				
-//				// Change the position of the ship based on the acceleration
-//				ship.move();
+				// Change the position of the ship based on the acceleration
+				ship.move();
 				asteroids.forEach(asteroid -> asteroid.move());
 				projectiles.forEach(projectile -> projectile.move());
                 projectilesAlien.forEach(projectile -> projectile.move());
-
-                //setting lives for the ship
-
-                int shipLife = ship.getLife();
-
-                if(ship.getLife() > 0){
-                    ship.move();
-                }
 				
 				//select a random time to generate alien ship, and make it move
                 Random rnd = new Random();
@@ -356,43 +439,18 @@ public class Game {
                     lastAlienBullet = System.currentTimeMillis();
                 }
 
-                if(ship.collide(alien)){
-                    if (shipLife > 0) {
-                        ship.setLife(shipLife - 1);
-                        String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
-                        System.out.println("Ship life -1, Life left:" + lifeLeft);
-                        ship.hyperSpaceJump(); //put ship in a safe location
-                    }
-                    else {
-                        System.out.println("Game over! You have been hit by alien.");
-                        System.out.println("The Ship have no life left :(");
-                        stop();
-                        timeline.stop();
-                        levelUpTimeline.stop();
-                        timelineScore.stop();
-                        gameOverScreen();
-                    }
-                }
-
                 // stops the application if alien projectile hit ship
                 projectilesAlien.forEach(projectile -> {
-                    if (ship.collide(projectile)) {
-                        if (shipLife > 0) {
-                            ship.setLife(shipLife - 1);
-                            String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
-                            System.out.println("You have been hit by the alien.");
-                            System.out.println("Ship life -1, Life left:" + lifeLeft);
-                            ship.hyperSpaceJump(); //put ship in a safe location
-                        }
-                        else {
-                            System.out.println("The Ship have no life left :(");
-                            System.out.println("Game over! You have been hit by alien.");
-                            stop();
-                            timeline.stop();
-                            levelUpTimeline.stop();
-                            timelineScore.stop();
-                            gameOverScreen();
-                        }
+                	if (ship.collide(projectile)) {
+                    	System.out.println("1 Life Lost");
+                    	if(life>0) {
+                    		restart();
+                    	}
+             
+                    	if(life==0) {
+                    		System.out.println("Last life lost. Game Over.");
+                    		gameOver();
+                    	}
                     }
                 });
 
@@ -427,8 +485,6 @@ public class Game {
                         projectileIterator.remove();
                         pane.getChildren().remove(projectile.getCharacter());
                     }
-
-
                 }
                 
                 // projectile hit Alien
@@ -449,29 +505,28 @@ public class Game {
                 // stops the application if a collision happens
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
-                        if (shipLife > 0) {
-                            ship.setLife(shipLife - 1);
-                            String lifeLeft = String.valueOf(ship.getLife()); //getting remaining life to show remaining
-                            System.out.println("Ship life -1, Life left:" + lifeLeft);
-                            ship.hyperSpaceJump(); //put ship in a safe location
-                        }
-                        else{
-                            System.out.println("The Ship have no life left :(");
-                            System.out.print("Collision. Game Over");
-                            stop();
-                            timeline.stop();
-                            levelUpTimeline.stop();
-                            timelineScore.stop();
-                            gameOverScreen();
-                        }
+                    	// collided flag added to stop multiple lives being lost during a single collision
+                    	if(!hasCollided) {
+                    		System.out.println("1 Life Lost");
+                    		hasCollided = true;
+                        	if(life>0) {
+                        		restart();
+                        	}
+                    	}
+
+                    	if(life==0) {
+                    		System.out.println("Last life lost. Game Over.");
+                    		gameOver();
+                    	}
+                    } else {
+                    	hasCollided = false;
                     }
                 });
             }
 		}.start();
-		
+
+		startBackgroundMusic();
 		stage.setScene(scene);
 		stage.show();
 	}
 }
-
-
