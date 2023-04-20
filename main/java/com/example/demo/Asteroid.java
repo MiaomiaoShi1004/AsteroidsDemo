@@ -34,12 +34,6 @@ public class Asteroid extends Character{
         this.rotationalMovement = 0.5 - rnd.nextDouble();
     }
 
-//    @Override
-//    public void move() {
-//        super.move();
-//        super.getCharacter().setRotate(super.getCharacter().getRotate() + rotationalMovement);
-//    }
-
     @Override
     public void move() {
         // Calculate speed factor based on pentagonSize
@@ -48,7 +42,7 @@ public class Asteroid extends Character{
             speedFactor = 1.8; // Fast speed
         } else if (this.pentagonSize == 20) {
             speedFactor = 1.5; // Medium speed
-        } else if (this.pentagonSize == 10) {
+        } else if (this.pentagonSize == 30) {
             speedFactor = 1.0; // Slow speed (default)
         }
 

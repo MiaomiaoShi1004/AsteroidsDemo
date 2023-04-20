@@ -453,72 +453,8 @@ public class Game {
                     	}
                     }
                 });
-/**
-                //  Using iterator to safely remove collided projectiles and asteroids
-                Iterator<Projectile> projectileIterator = projectiles.iterator();
-                while (projectileIterator.hasNext()) {
-                    Projectile projectile = projectileIterator.next();
-
-                    Iterator<Asteroid> asteroidIterator = asteroids.iterator();
-                    boolean projectileCollided = false;
-                    while (asteroidIterator.hasNext()) {
-                        Asteroid asteroid = asteroidIterator.next();
-                        if (asteroid.collide(projectile)) {
-                            projectileCollided = true;
-                            asteroidIterator.remove();
-                            pane.getChildren().remove(asteroid.getCharacter());
-                        }
-                    }
-
-                    //  Removing collided projectiles
-                    if (projectileCollided) {
-                        projectileIterator.remove();
-                        pane.getChildren().remove(projectile.getCharacter());
-                    }
-                }
-*/
 
                 // Using iterator to safely remove collided projectiles and asteroids
-/**                 Iterator<Projectile> projectileIterator = projectiles.iterator();
-               while (projectileIterator.hasNext()) {
-                    Projectile projectile = projectileIterator.next();
-
-                    Iterator<Asteroid> asteroidIterator = asteroids.iterator();
-                    Asteroid asteroidToRemove = null; // Added to store the collided asteroid
-                    boolean projectileCollided = false;
-                    while (asteroidIterator.hasNext()) {
-                        Asteroid asteroid = asteroidIterator.next();
-                        if (asteroid.collide(projectile)) {
-                            projectileCollided = true;
-                            asteroidToRemove = asteroid; // Store the collided asteroid
-                            break;
-                        }
-                    }
-
-                    // Removing collided projectiles
-                    if (projectileCollided) {
-                        projectileIterator.remove();
-                        pane.getChildren().remove(projectile.getCharacter());
-
-                        // Removing the collided asteroid
-                        if (asteroidToRemove != null) {
-                            System.out.println("My size" + asteroidToRemove.getPentagonSize());
-                            asteroidIterator.remove();
-                            pane.getChildren().remove(asteroidToRemove.getCharacter());
-
-                            // Creating and adding the new smaller asteroids
-                            for (int i = 0; i < 2; i++) {
-                                Asteroid split20 = new Asteroid(20, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
-                                asteroids.add(split20); // Directly add the new smaller asteroids to the main list
-                                split20.addStyleClass("asteroid");
-                                pane.getChildren().add(split20.getCharacter());
-                                split20.move();
-                            }
-                        }
-                    }
-                }
-*/
-
                 Iterator<Projectile> projectileIterator = projectiles.iterator();
                 while (projectileIterator.hasNext()) {
                     Projectile projectile = projectileIterator.next();
