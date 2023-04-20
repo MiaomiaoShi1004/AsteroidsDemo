@@ -10,10 +10,16 @@ public class Asteroid extends Character{
     // rotationalMovement represent the fixed value which is added to the "Rotate" everytime it moves.
     private double rotationalMovement;
 
-    public Asteroid(int x, int y) {
+    public double getPentagonSize() {
+        return pentagonSize;
+    }
+
+    private double pentagonSize;
+
+    public Asteroid(double pentagonSize, int x, int y) {
 
         // invoke the super class(Character class)'s construction method
-        super(new PolygonFactory().createPolygon(), x, y);
+        super(new PolygonFactory().createPolygon(pentagonSize), x, y);
         // set the random rotate
         Random rnd = new Random();
         super.getCharacter().setRotate(rnd.nextInt(360));
@@ -24,6 +30,7 @@ public class Asteroid extends Character{
         }
 
         this.rotationalMovement = 0.5 - rnd.nextDouble();
+        this.pentagonSize = pentagonSize;
     }
 
     @Override

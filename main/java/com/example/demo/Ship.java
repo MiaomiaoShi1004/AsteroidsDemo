@@ -45,7 +45,7 @@ public class Ship extends Character{
                 Random rnd = new Random();
                 int width = rnd.nextInt(WIDTH);
                 int height = rnd.nextInt(HEIGHT);
-                Character characterTest = new Asteroid(width, height);
+                Character characterTest = new Asteroid(30, width, height);
                 // check the location whether it's safe
                 for (Asteroid asteroid : asteroids){
                     if (characterTest.collide(asteroid)) {
