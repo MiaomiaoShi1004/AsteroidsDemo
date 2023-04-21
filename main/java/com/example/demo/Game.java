@@ -123,7 +123,7 @@ public class Game {
     
     public Asteroid addAsteroid() {
         Random rnd = new Random();
-        Asteroid newAsteroid = new Asteroid(rnd.nextInt(600), rnd.nextInt(400));
+        Asteroid newAsteroid = new Asteroid(30, rnd.nextInt(600), rnd.nextInt(400));
         return newAsteroid;
     }
     
@@ -367,8 +367,7 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-	                // && limit the number of projectiles
-	                if (pressedKeys.contains(KeyCode.SPACE) && projectiles.size() < 5) {
+
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -379,7 +378,7 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-	                }
+
 				}
 				
 				// Change the position of the ship based on the acceleration
@@ -455,39 +454,55 @@ public class Game {
                     }
                 });
 
-                // projectile hit asteroids
-                projectiles.forEach(projectile -> {
-                    List<Asteroid> collisions = asteroids.stream().filter(asteroid -> asteroid.collide(projectile)).collect(Collectors.toList());
-                    // Removed asteroid from the asteroid list
-                    collisions.stream().forEach(collided -> {
-                        asteroids.remove(collided);
-                        pane.getChildren().remove(collided.getCharacter());
-                    });
-                });
-
-                //  Using iterator to safely remove collided projectiles and asteroids
+                // Using iterator to safely remove collided projectiles and asteroids
                 Iterator<Projectile> projectileIterator = projectiles.iterator();
                 while (projectileIterator.hasNext()) {
                     Projectile projectile = projectileIterator.next();
 
                     Iterator<Asteroid> asteroidIterator = asteroids.iterator();
+                    Asteroid asteroidToRemove = null;
                     boolean projectileCollided = false;
                     while (asteroidIterator.hasNext()) {
                         Asteroid asteroid = asteroidIterator.next();
                         if (asteroid.collide(projectile)) {
                             projectileCollided = true;
-                            asteroidIterator.remove();
-                            pane.getChildren().remove(asteroid.getCharacter());
+                            asteroidToRemove = asteroid;
+                            break;
                         }
                     }
 
-                    //  Removing collided projectiles
                     if (projectileCollided) {
                         projectileIterator.remove();
                         pane.getChildren().remove(projectile.getCharacter());
+
+                        if (asteroidToRemove != null) {
+                            double currPentagonSize = asteroidToRemove.getPentagonSize();
+                            asteroidIterator.remove();
+                            pane.getChildren().remove(asteroidToRemove.getCharacter());
+
+                            if (currPentagonSize == 30) {
+                                for (int i = 0; i < 2; i++) {
+                                    Asteroid split20 = new Asteroid(20, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
+                                    asteroids.add(split20);
+                                    split20.addStyleClass("asteroid");
+                                    pane.getChildren().add(split20.getCharacter());
+                                    split20.move();
+                                }
+                            } else if (currPentagonSize == 20) {
+                                for (int i = 0; i < 2; i++) {
+                                    Asteroid split10 = new Asteroid(10, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
+                                    asteroids.add(split10);
+                                    split10.addStyleClass("asteroid");
+                                    pane.getChildren().add(split10.getCharacter());
+                                    split10.move();
+                                }
+                            }
+                            // If pentagonSize is 10, the asteroid will just disappear without creating new ones
+                        }
                     }
                 }
-                
+
+
                 // projectile hit Alien
                 projectiles.forEach(projectile -> {
                     if (alien.collide(projectile)) {
