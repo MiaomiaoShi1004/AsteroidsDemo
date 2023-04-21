@@ -1,8 +1,5 @@
 package com.example.demo;
 
-import javafx.geometry.Point2D;
-import javafx.scene.shape.Polygon;
-
 import java.util.Random;
 
 public class Asteroid extends Character{

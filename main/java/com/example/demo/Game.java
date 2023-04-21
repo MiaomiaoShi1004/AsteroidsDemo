@@ -133,8 +133,18 @@ public class Game {
     
     // Creates a single asteroid
     public Asteroid addAsteroid() {
-        Random rnd = new Random();
-        Asteroid newAsteroid = new Asteroid(valueLarge, rnd.nextInt(600), rnd.nextInt(400));
+    	Random rnd = new Random();
+    	
+    	// Create a list of asteroid sizes
+        List<Double> asteroidSizes = new ArrayList<>();
+        
+        asteroidSizes.add(valueSmall);
+        asteroidSizes.add(valueMedium);
+        asteroidSizes.add(valueLarge);
+        
+        double randomSize = asteroidSizes.get(rnd.nextInt(asteroidSizes.size()));
+        
+        Asteroid newAsteroid = new Asteroid(randomSize, rnd.nextInt(600), rnd.nextInt(400));
         return newAsteroid;
     }
     
