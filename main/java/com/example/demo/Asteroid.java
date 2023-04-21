@@ -42,7 +42,7 @@ public class Asteroid extends Character{
             speedFactor = 1.8; // Fast speed
         } else if (this.pentagonSize == 20) {
             speedFactor = 1.5; // Medium speed
-        } else if (this.pentagonSize == 40) {
+        } else if (this.pentagonSize == 30) {
             speedFactor = 1.0; // Slow speed (default)
         }
 

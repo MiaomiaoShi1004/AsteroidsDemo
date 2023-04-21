@@ -123,7 +123,7 @@ public class Game {
     
     public Asteroid addAsteroid() {
         Random rnd = new Random();
-        Asteroid newAsteroid = new Asteroid(40, rnd.nextInt(600), rnd.nextInt(400));
+        Asteroid newAsteroid = new Asteroid(30, rnd.nextInt(600), rnd.nextInt(400));
         return newAsteroid;
     }
     
@@ -485,7 +485,7 @@ public class Game {
                             asteroidIterator.remove();
                             pane.getChildren().remove(asteroidToRemove.getCharacter());
 
-                            if (currPentagonSize == 40) {
+                            if (currPentagonSize == 30) {
                                 for (int i = 0; i < 2; i++) {
                                     Asteroid split20 = new Asteroid(20, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
                                     asteroids.add(split20);
