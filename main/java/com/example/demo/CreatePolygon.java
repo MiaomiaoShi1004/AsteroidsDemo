@@ -5,7 +5,7 @@ import javafx.scene.shape.Polygon;
 import java.util.Random;
 
 // class is used to adding variation to the size of the asteroids and the locations of asteroids corners.
-public class PolygonFactory {
+public class CreatePolygon {
     public Polygon createPolygon(double size) {
         Random rnd = new Random();
 

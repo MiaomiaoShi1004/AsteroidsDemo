@@ -33,9 +33,6 @@ import java.net.URL;
 import javafx.application.Platform;
 
 
-
-
-
 public class Game {
 	
     private Stage stage;
@@ -206,7 +203,6 @@ public class Game {
         return numAsteroids;
     }
     
-    
     public void start() throws Exception {
     	
     	// Track time and add 1 to the players score every 0.01 second.
@@ -372,7 +368,6 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -383,7 +378,6 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-
 				}
 				
 				// Change the position of the ship based on the acceleration
@@ -506,7 +500,6 @@ public class Game {
                         }
                     }
                 }
-
 
                 // projectile hit Alien
                 projectiles.forEach(projectile -> {

@@ -52,9 +52,16 @@ public class Main extends Application {
 	        }
 	    });
 	    startButton.getStyleClass().add("start-button");
+	    
+	    String upArrow = "\u2191";
+        String leftArrow = "\u2190";
+        String rightArrow = "\u2192";
+	    
+	    Label controls = new Label(upArrow + "= Accelerate\n" + leftArrow + "= Turn Left\n" + rightArrow + "= Turn Right\n" + "H = Hyper Jumper");
+	    controls.getStyleClass().add("controls");
 
 	    // Add the components to the VBox
-	    startScreen.getChildren().addAll(titleLabel, nameInputLabel, nameInput, startButton);
+	    startScreen.getChildren().addAll(titleLabel, nameInputLabel, nameInput, startButton, controls);
 	    
 	    // Load the stylesheet
 	    try {
