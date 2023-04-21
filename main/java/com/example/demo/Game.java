@@ -53,7 +53,16 @@ public class Game {
     private boolean hasCollided = false;
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
-    
+
+    // for the enum value
+    AsteroidSizeEnum asteroid = AsteroidSizeEnum.SMALL;
+    double valueSmall = asteroid.getValue();
+    AsteroidSizeEnum asteroid1 = AsteroidSizeEnum.MEDIUM;
+    double valueMedium = asteroid1.getValue();
+    AsteroidSizeEnum asteroid2 = AsteroidSizeEnum.LARGE;
+    double valueLarge = asteroid2.getValue();
+
+
     String css = this.getClass().getResource("style.css").toExternalForm();
     
     public Game(Stage stage, String playerName) {
@@ -123,7 +132,7 @@ public class Game {
     
     public Asteroid addAsteroid() {
         Random rnd = new Random();
-        Asteroid newAsteroid = new Asteroid(40, rnd.nextInt(600), rnd.nextInt(400));
+        Asteroid newAsteroid = new Asteroid(valueLarge, rnd.nextInt(600), rnd.nextInt(400));
         return newAsteroid;
     }
     
@@ -480,17 +489,17 @@ public class Game {
                             asteroidIterator.remove();
                             pane.getChildren().remove(asteroidToRemove.getCharacter());
 
-                            if (currPentagonSize == 40) {
+                            if (currPentagonSize == valueLarge) {
                                 for (int i = 0; i < 2; i++) {
-                                    Asteroid split20 = new Asteroid(20, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
+                                    Asteroid split20 = new Asteroid(valueMedium, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
                                     asteroids.add(split20);
                                     split20.addStyleClass("asteroid");
                                     pane.getChildren().add(split20.getCharacter());
                                     split20.move();
                                 }
-                            } else if (currPentagonSize == 20) {
+                            } else if (currPentagonSize == valueMedium) {
                                 for (int i = 0; i < 2; i++) {
-                                    Asteroid split10 = new Asteroid(10, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
+                                    Asteroid split10 = new Asteroid(valueSmall, (int) asteroidToRemove.getCharacter().getTranslateX(), (int) asteroidToRemove.getCharacter().getTranslateY());
                                     asteroids.add(split10);
                                     split10.addStyleClass("asteroid");
                                     pane.getChildren().add(split10.getCharacter());
