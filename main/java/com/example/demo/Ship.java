@@ -45,18 +45,19 @@ public class Ship extends Character{
                 Random rnd = new Random();
                 int width = rnd.nextInt(WIDTH);
                 int height = rnd.nextInt(HEIGHT);
-                Character characterTest = new Asteroid(30, width, height);
+                Character characterTest = new Asteroid(50, width, height);
                 // check the location whether it's safe
                 for (Asteroid asteroid : asteroids){
                     if (characterTest.collide(asteroid)) {
                         secureLocation = false;
-                        System.out.println("hyperspace jump hits a collision!");
+                        System.out.println("Dangerous hyperspace jump location... re calculating");
                     }
                 }
 
                 if (secureLocation == true){
                     // have secure location
                     super.SetCharacterXY(width, height);
+                    System.out.println("Safe hyperspace jump location found... jumping");
                     break;
                 }
             }

@@ -48,6 +48,7 @@ public class Game {
     private Alien alien;
     private Projectile projectile;
     private boolean hasCollided = false;
+    private boolean isInvincible = true;
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
     
@@ -80,6 +81,7 @@ public class Game {
     	time += 1;
     	timeLabel.setText("Time: " + time);
     }
+    
 	private	MediaPlayer mediaPlayer;
 
 	private void startBackgroundMusic() {
@@ -205,6 +207,11 @@ public class Game {
     
     public void start() throws Exception {
     	
+    	// reset the number of asteroid to play again
+		numAsteroids = 10;
+    	asteroids.clear();
+    	System.out.print("Starting number of asteroids = " + numAsteroids);
+    	
     	// Track time and add 1 to the players score every 0.01 second.
     	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
     		updateScore();
@@ -293,6 +300,16 @@ public class Game {
         levelUpTimeline.setCycleCount(Timeline.INDEFINITE);
         levelUpTimeline.play();
         
+        // Make the ship invincible at the start for 3 seconds
+        Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+	        @Override
+	        public void run() {
+	            isInvincible = false;
+	            System.out.println("Invincibility over");
+	        }
+	    }, 3000);
+        
 		
 		// Animation Class - Runs all the animation for the game
 		new AnimationTimer() {
@@ -307,30 +324,43 @@ public class Game {
 	        }
 			
 			public void restart() {
-				// Have the ship re spawn in a safe area and reduce the life by 1
-				hasCollided = false;
-				ship.hyperSpaceJump();
-				updateLife();
-				Timer timer = new Timer();
-				ship.addStyleClass("red");
-				timer.schedule(new TimerTask() {
-				    @Override
-				    public void run() {
-				        ship.removeStyleClass("red");
-				    }
-				}, 100);
-				timer.schedule(new TimerTask() {
-				    @Override
-				    public void run() {
-				        ship.addStyleClass("red");
-				    }
-				}, 200);
-				timer.schedule(new TimerTask() {
-				    @Override
-				    public void run() {
-				        ship.removeStyleClass("red");
-				    }
-				}, 300);
+			    // Have the ship respawn in a safe area and reduce the life by 1
+			    hasCollided = false;
+			    ship.hyperSpaceJump();
+			    updateLife();
+			    
+			    // Make the ship invincible
+			    isInvincible = true;
+			    
+			    // Blinking effect
+			    Timer timer = new Timer();
+			    ship.addStyleClass("red");
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            ship.removeStyleClass("red");
+			        }
+			    }, 100);
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            ship.addStyleClass("red");
+			        }
+			    }, 200);
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            ship.removeStyleClass("red");
+			        }
+			    }, 300);
+
+			    // Set the invincibility flag to false after 3 seconds
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            isInvincible = false;
+			        }
+			    }, 3000);
 			}
 			
 			private long lastBullet = 0; //for bullet to not be continuous
@@ -441,15 +471,19 @@ public class Game {
                 // stops the application if alien projectile hit ship
                 projectilesAlien.forEach(projectile -> {
                 	if (ship.collide(projectile)) {
-                    	System.out.println("1 Life Lost");
-                    	if(life>0) {
-                    		restart();
-                    	}
-             
-                    	if(life==0) {
-                    		System.out.println("Last life lost. Game Over.");
-                    		gameOver();
-                    	}
+                		if(isInvincible) {
+                			System.out.println("Ship is invincible");
+                		}else {
+                			System.out.println("1 Life Lost");
+                        	if(life>0) {
+                        		restart();
+                        	}
+                 
+                        	if(life==0) {
+                        		System.out.println("Last life lost. Game Over.");
+                        		gameOver();
+                        	}
+                		}
                     }
                 });
 
@@ -520,20 +554,21 @@ public class Game {
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
                     	// collided flag added to stop multiple lives being lost during a single collision
-                    	if(!hasCollided) {
-                    		System.out.println("1 Life Lost");
-                    		hasCollided = true;
-                        	if(life>0) {
-                        		restart();
+                    	if(isInvincible) {
+                    		System.out.println("Ship is invincible");
+                    	}else {
+                    		if(!hasCollided) {
+                        		System.out.println("1 Life Lost");
+                        		hasCollided = true;
+                            	if(life>0) {
+                            		restart();
+                            	}
+                        	}
+                        	if(life==0) {
+                        		System.out.println("Last life lost. Game Over.");
+                        		gameOver();
                         	}
                     	}
-
-                    	if(life==0) {
-                    		System.out.println("Last life lost. Game Over.");
-                    		gameOver();
-                    	}
-                    } else {
-                    	hasCollided = false;
                     }
                 });
             }

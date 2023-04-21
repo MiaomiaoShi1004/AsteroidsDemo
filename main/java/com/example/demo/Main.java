@@ -57,23 +57,21 @@ public class Main extends Application {
         String leftArrow = "\u2190";
         String rightArrow = "\u2192";
 	    
-	    Label controls = new Label(upArrow + "= Accelerate\n" + leftArrow + "= Turn Left\n" + rightArrow + "= Turn Right\n" + "H = Hyper Jumper");
+	    Label controls = new Label(upArrow + "= Accelerate\n" + leftArrow + "= Turn Left\n" + rightArrow + "= Turn Right\n" + "SPACE = Shoot\n" + "H = Hyper Jumper");
 	    controls.getStyleClass().add("controls");
+	    
+	    Label gameRules = new Label("Shoot the asteroids and live for as long as you can.\nYou have 3 lives. When you loose a life, your ship is invincible for 3 seconds.\nEvery 10,000 points you regain a life!");
+	    gameRules.getStyleClass().add("game-rules");
 
 	    // Add the components to the VBox
-	    startScreen.getChildren().addAll(titleLabel, nameInputLabel, nameInput, startButton, controls);
+	    startScreen.getChildren().addAll(titleLabel, nameInputLabel, nameInput, startButton, controls, gameRules);
 	    
 	    // Load the stylesheet
-	    try {
-	    	Scene startScene = new Scene(startScreen);
-	    	startScene.getStylesheets().add(css);
-	    	stage.setTitle("Asteroids");
-		    stage.setScene(startScene);
-		    stage.show();
-	    } catch(Exception e) {
-	    	e.printStackTrace();
-	    }
-	    
+    	Scene startScene = new Scene(startScreen);
+    	startScene.getStylesheets().add(css);
+    	stage.setTitle("Asteroids");
+	    stage.setScene(startScene);
+	    stage.show();
 	}
 
 	public static void startGame(String playerName) throws Exception {
