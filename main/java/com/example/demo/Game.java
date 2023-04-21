@@ -359,6 +359,11 @@ public class Game {
 				if(pressedKeys.contains(KeyCode.UP)) {
 					ship.accelerate();
 				}
+
+                //decelerate the ship
+                if(pressedKeys.contains(KeyCode.DOWN)) {
+                    ship.decelerate();
+                }
 				
 				// hyper jump
 				if(pressedKeys.contains(KeyCode.H)) {
