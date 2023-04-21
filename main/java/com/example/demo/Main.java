@@ -1,7 +1,5 @@
 package com.example.demo;
 
-import java.net.URL;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -17,9 +15,9 @@ public class Main extends Application {
 	public static final int WIDTH = 600;
 	public static final int HEIGHT = 400;
 	
-	
 	private static Stage stage;
 	
+	// Link the stylesheet
 	String css = this.getClass().getResource("style.css").toExternalForm();
 	
 	@Override
@@ -52,23 +50,31 @@ public class Main extends Application {
 	        }
 	    });
 	    startButton.getStyleClass().add("start-button");
+	    
+	    String upArrow = "\u2191";
+        String leftArrow = "\u2190";
+        String rightArrow = "\u2192";
+	    
+        // Controls label
+	    Label controls = new Label(upArrow + "= Accelerate\n" + leftArrow + "= Turn Left\n" + rightArrow + "= Turn Right\n" + "SPACE = Shoot\n" + "H = Hyper Jumper");
+	    controls.getStyleClass().add("controls");
+	    
+	    // Game rules label
+	    Label gameRules = new Label("Shoot the asteroids and live for as long as you can.\nYou have 3 lives. When you loose a life, your ship is invincible for 3 seconds.\nEvery 10,000 points you regain a life!");
+	    gameRules.getStyleClass().add("game-rules");
 
 	    // Add the components to the VBox
-	    startScreen.getChildren().addAll(titleLabel, nameInputLabel, nameInput, startButton);
+	    startScreen.getChildren().addAll(titleLabel, nameInputLabel, nameInput, startButton, controls, gameRules);
 	    
 	    // Load the stylesheet
-	    try {
-	    	Scene startScene = new Scene(startScreen);
-	    	startScene.getStylesheets().add(css);
-	    	stage.setTitle("Asteroids");
-		    stage.setScene(startScene);
-		    stage.show();
-	    } catch(Exception e) {
-	    	e.printStackTrace();
-	    }
-	    
+    	Scene startScene = new Scene(startScreen);
+    	startScene.getStylesheets().add(css);
+    	stage.setTitle("Asteroids");
+	    stage.setScene(startScene);
+	    stage.show();
 	}
-
+	
+	// Start game method called by start button
 	public static void startGame(String playerName) throws Exception {
 	    Game game = new Game(stage, playerName);
 	    game.start();

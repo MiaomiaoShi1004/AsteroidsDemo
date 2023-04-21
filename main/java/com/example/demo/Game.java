@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.Timer;
-import java.util.stream.Collectors;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
@@ -28,13 +27,6 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import java.net.URL;
-import javafx.application.Platform;
-
-
-
-
 
 public class Game {
 	
@@ -51,17 +43,11 @@ public class Game {
     private Alien alien;
     private Projectile projectile;
     private boolean hasCollided = false;
+    private boolean isInvincible = true;
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
-
-    // for the enum value
-    AsteroidSizeEnum asteroid = AsteroidSizeEnum.SMALL;
-    double valueSmall = asteroid.getValue();
-    AsteroidSizeEnum asteroid1 = AsteroidSizeEnum.MEDIUM;
-    double valueMedium = asteroid1.getValue();
-    AsteroidSizeEnum asteroid2 = AsteroidSizeEnum.LARGE;
-    double valueLarge = asteroid2.getValue();
-
+    
+    // Link the stylesheet
 
     String css = this.getClass().getResource("style.css").toExternalForm();
     
@@ -73,25 +59,30 @@ public class Game {
         this.timeLabel = new Label("Time: 0");
     }
     
+    // Add 1 to the score total
     public void updateScore() {
     	score += 1;
     	scoreLabel.setText("Score: " + score);
     }
     
+    // Reduce life by 1
     public void updateLife() {
     	life -= 1;
     	lifeLabel.setText("Life: " + life);
     }
     
+    // Increase life by 1
     public void addLife() {
     	life += 1;
     	lifeLabel.setText("Life: " + life);
     }
     
+    // Update time value by 1
     public void updateTime() {
     	time += 1;
     	timeLabel.setText("Time: " + time);
     }
+    
 	private	MediaPlayer mediaPlayer;
 
 	private void startBackgroundMusic() {
@@ -102,7 +93,8 @@ public class Game {
 		mediaPlayer.play();
 	}
     
-    // Takes a number and an empty list of asteroids
+    // Method creates the asteroids list
+	// takes the numAsteroids variable and the asteroids list
     public List<Asteroid> createAsteroids(int numAsteroids, List<Asteroid> asteroids) {
 		for(int i=asteroids.size(); i<numAsteroids; i++) {
 			Asteroid newAsteroid = this.addAsteroid();
@@ -112,30 +104,35 @@ public class Game {
 		return asteroids;
     }
     
+    // Creates the ship
     public Ship createShip() {
     	this.ship = new Ship(300,200);
     	this.ship.addStyleClass("ship");
     	return ship;
     }
     
+    // Creates the alien
     public Alien createAlien() {
     	this.alien = new Alien(0,30,2);
     	this.alien.addStyleClass("alien");
     	return alien;
     }
     
+    // Create a projectile
     public Projectile createProjectile(int x, int y) {
     	this.projectile = new Projectile(x,y);
     	this.projectile.addStyleClass("projectile");
     	return projectile;
     }
     
+    // Creates a single asteroid
     public Asteroid addAsteroid() {
         Random rnd = new Random();
         Asteroid newAsteroid = new Asteroid(valueLarge, rnd.nextInt(600), rnd.nextInt(400));
         return newAsteroid;
     }
     
+    // Generates the game over screen
     public void gameOverScreen() {
         HighScore highScore = new HighScore();
         highScore.updateHighScores(playerName, score);
@@ -195,10 +192,16 @@ public class Game {
         stage.setScene(endScene);
         stage.show();
     }
-
+    
+    // Controls the levelling up process - increasing asteroid count
     public int levelUpAsteroidCount(int numAsteroids, List<Asteroid> asteroids) {
     	
     	// Increase the asteroids by 25% each level
+    	// Level 1 = 10 asteroids
+    	// Level 2 (+25%) = 13 and so on
+    	// This is the capped amount for the level
+    	// The current number of asteroids in the game is calculated and the difference is created
+    	// Bringing the total number of asteroids up to the cap every time the level increases
     	System.out.print("Current number of asteroids = " + asteroids.size() + "\n");
     	int currentNumAsteroids = asteroids.size();
         int additionalAsteroids = (int) Math.ceil(numAsteroids * 0.25);
@@ -215,8 +218,12 @@ public class Game {
         return numAsteroids;
     }
     
-    
     public void start() throws Exception {
+    	
+    	// reset the number of asteroid and clear the asteroids list to play again
+		numAsteroids = 10;
+    	asteroids.clear();
+    	System.out.print("Starting number of asteroids = " + numAsteroids);
     	
     	// Track time and add 1 to the players score every 0.01 second.
     	Timeline timelineScore = new Timeline(new KeyFrame(Duration.seconds(0.01), event -> {
@@ -276,7 +283,6 @@ public class Game {
 		pane.getChildren().add(ship.getCharacter());
 		asteroids.forEach(asteroid -> pane.getChildren().add(asteroid.getCharacter()));
 		
-		
 		// Create a hash set to track the pressed keys
 		Set<KeyCode> pressedKeys = new HashSet<>();
 		
@@ -306,10 +312,21 @@ public class Game {
         levelUpTimeline.setCycleCount(Timeline.INDEFINITE);
         levelUpTimeline.play();
         
+        // Make the ship invincible at the start for 3 seconds
+        Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+	        @Override
+	        public void run() {
+	            isInvincible = false;
+	            System.out.println("Invincibility over");
+	        }
+	    }, 3000);
+        
 		
 		// Animation Class - Runs all the animation for the game
 		new AnimationTimer() {
 			
+			// Game over method
 			public void gameOver() {
 	        	System.out.println("Game over! You have been hit by alien.");
 	            stop();
@@ -319,37 +336,52 @@ public class Game {
 	    		gameOverScreen();
 	        }
 			
+			// Restart method
 			public void restart() {
-				// Have the ship re spawn in a safe area and reduce the life by 1
-				hasCollided = false;
-				ship.hyperSpaceJump();
-				updateLife();
-				Timer timer = new Timer();
-				ship.addStyleClass("red");
-				timer.schedule(new TimerTask() {
-				    @Override
-				    public void run() {
-				        ship.removeStyleClass("red");
-				    }
-				}, 100);
-				timer.schedule(new TimerTask() {
-				    @Override
-				    public void run() {
-				        ship.addStyleClass("red");
-				    }
-				}, 200);
-				timer.schedule(new TimerTask() {
-				    @Override
-				    public void run() {
-				        ship.removeStyleClass("red");
-				    }
-				}, 300);
+			    // Have the ship respawn in a safe area and reduce the life by 1
+			    hasCollided = false;
+			    ship.hyperSpaceJump();
+			    updateLife();
+			    
+			    // Make the ship invincible
+			    isInvincible = true;
+			    
+			    // Blinking red effect
+			    Timer timer = new Timer();
+			    ship.addStyleClass("red");
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            ship.removeStyleClass("red");
+			        }
+			    }, 100);
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            ship.addStyleClass("red");
+			        }
+			    }, 200);
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            ship.removeStyleClass("red");
+			        }
+			    }, 300);
+
+			    // Set the invincibility flag to false after 3 seconds
+			    timer.schedule(new TimerTask() {
+			        @Override
+			        public void run() {
+			            isInvincible = false;
+			        }
+			    }, 3000);
 			}
 			
 			private long lastBullet = 0; //for bullet to not be continuous
             double startTime = System.currentTimeMillis(); //set generate alien game start time
             int alienFlag = 0; //a flag for alien ship appearing
             double lastAlienBullet = 0; //a timer for fire shooting speed of alien
+            
 			public void handle(long now) {
 				// If the pressedKeys set contains the LEFT key
 				// rotate the ship 5 degrees left continuously
@@ -381,7 +413,6 @@ public class Game {
 				
 				if (pressedKeys.contains(KeyCode.SPACE) && (now - lastBullet > 300_000_000)) {
 	                // press space for shooting
-
 	                    // create a projectile and its direction is the same as the ship's direction.
 	                    Projectile projectile = createProjectile((int) ship.getCharacter().getTranslateX(), (int) ship.getCharacter().getTranslateY());
 	                    projectile.getCharacter().setRotate(ship.getCharacter().getRotate());
@@ -392,7 +423,6 @@ public class Game {
 	                    // Present the projectile in the screen
 	                    pane.getChildren().add(projectile.getCharacter());
 	                    lastBullet = now;
-
 				}
 				
 				// Change the position of the ship based on the acceleration
@@ -453,18 +483,24 @@ public class Game {
                     lastAlienBullet = System.currentTimeMillis();
                 }
 
-                // stops the application if alien projectile hit ship
+                // stops the application if alien projectile hits the ship
                 projectilesAlien.forEach(projectile -> {
                 	if (ship.collide(projectile)) {
-                    	System.out.println("1 Life Lost");
-                    	if(life>0) {
-                    		restart();
-                    	}
-             
-                    	if(life==0) {
-                    		System.out.println("Last life lost. Game Over.");
-                    		gameOver();
-                    	}
+                		// Check if it is invincible
+                		if(isInvincible) {
+                			System.out.println("Ship is invincible");
+                		}else {
+                			// If not, reduce life by 1 and restart
+                			System.out.println("1 Life Lost");
+                        	if(life>0) {
+                        		restart();
+                        	}
+                        	// If life is 0, end the game
+                        	if(life==0) {
+                        		System.out.println("Last life lost. Game Over.");
+                        		gameOver();
+                        	}
+                		}
                     }
                 });
 
@@ -516,7 +552,6 @@ public class Game {
                     }
                 }
 
-
                 // projectile hit Alien
                 projectiles.forEach(projectile -> {
                     if (alien.collide(projectile)) {
@@ -536,20 +571,24 @@ public class Game {
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
                     	// collided flag added to stop multiple lives being lost during a single collision
-                    	if(!hasCollided) {
-                    		System.out.println("1 Life Lost");
-                    		hasCollided = true;
-                        	if(life>0) {
-                        		restart();
+                    	if(isInvincible) {
+                    		// Check if the ship is invincible
+                    		System.out.println("Ship is invincible");
+                    	}else {
+                    		// If has collided variable is false, set to true, reduce life by 1 and restart
+                    		if(!hasCollided) {
+                        		System.out.println("1 Life Lost");
+                        		hasCollided = true;
+                            	if(life>0) {
+                            		restart();
+                            	}
+                        	}
+                    		// If life is 0, end the game
+                        	if(life==0) {
+                        		System.out.println("Last life lost. Game Over.");
+                        		gameOver();
                         	}
                     	}
-
-                    	if(life==0) {
-                    		System.out.println("Last life lost. Game Over.");
-                    		gameOver();
-                    	}
-                    } else {
-                    	hasCollided = false;
                     }
                 });
             }

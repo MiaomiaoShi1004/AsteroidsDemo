@@ -11,7 +11,7 @@
 	-fx-padding:10px;
 }
 
-.title-label {
+.title-label{
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: #45a049;
@@ -26,8 +26,20 @@
     -fx-text-fill: #ffffff;
 }
 
-.name-input-label{
-	-fx-text-fill: #ffffff
+.name-input-label,
+.game-rules{
+	-fx-text-fill: #ffffff;
+	-fx-font-weight: bold;
+	-fx-font-size: 14px;
+	-fx-text-alignment: center;
+}
+
+.controls{
+	-fx-text-fill: #45a049;
+	-fx-font-weight: bold;
+	-fx-font-size: 14px;
+	-fx-alignment: center;
+	-fx-text-alignment: center;
 }
 
 .start-button {

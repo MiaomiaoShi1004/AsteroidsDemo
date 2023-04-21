@@ -28,7 +28,7 @@ public class Asteroid extends Character{
     public Asteroid(double pentagonSize, int x, int y) {
 
         // invoke the super class(Character class)'s construction method
-        super(new PolygonFactory().createPolygon(pentagonSize), x, y);
+        super(new CreatePolygon().createPolygon(pentagonSize), x, y);
         // set the random rotate
         Random rnd = new Random();
         super.getCharacter().setRotate(rnd.nextInt(360));
