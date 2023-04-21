@@ -252,6 +252,11 @@ public class Game {
 		pane = new Pane();
 		pane.setPrefSize(600, 400);
 		
+		// Set the view order for the labels so that they are always seen
+		scoreLabel.setViewOrder(-1);
+		lifeLabel.setViewOrder(-1);
+		timeLabel.setViewOrder(-1);
+		
 		// Place the score, life and time labels on the pane
 		scoreLabel.setLayoutX(10);
 	    scoreLabel.setLayoutY(10);
