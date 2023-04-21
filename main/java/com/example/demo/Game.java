@@ -47,8 +47,14 @@ public class Game {
     public static List<Asteroid> asteroids = new ArrayList<>();
     public static int numAsteroids = 10;
     
+    AsteroidSizeEnum asteroid = AsteroidSizeEnum.SMALL;
+    double valueSmall = asteroid.getValue();
+    AsteroidSizeEnum asteroid1 = AsteroidSizeEnum.MEDIUM;
+    double valueMedium = asteroid1.getValue();
+    AsteroidSizeEnum asteroid2 = AsteroidSizeEnum.LARGE;
+    double valueLarge = asteroid2.getValue();
+    
     // Link the stylesheet
-
     String css = this.getClass().getResource("style.css").toExternalForm();
     
     public Game(Stage stage, String playerName) {
@@ -373,6 +379,7 @@ public class Game {
 			        @Override
 			        public void run() {
 			            isInvincible = false;
+			            System.out.println("Invincibility over");
 			        }
 			    }, 3000);
 			}
