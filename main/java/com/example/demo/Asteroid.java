@@ -17,6 +17,14 @@ public class Asteroid extends Character{
 
     private double pentagonSize;
 
+    // for the enum value
+    AsteroidSizeEnum asteroid = AsteroidSizeEnum.SMALL;
+    double valueSmall = asteroid.getValue();
+    AsteroidSizeEnum asteroid1 = AsteroidSizeEnum.MEDIUM;
+    double valueMedium = asteroid1.getValue();
+    AsteroidSizeEnum asteroid2 = AsteroidSizeEnum.LARGE;
+    double valueLarge = asteroid2.getValue();
+
     public Asteroid(double pentagonSize, int x, int y) {
 
         // invoke the super class(Character class)'s construction method
@@ -38,11 +46,11 @@ public class Asteroid extends Character{
     public void move() {
         // Calculate speed factor based on pentagonSize
         double speedFactor = 0;
-        if (this.pentagonSize == 10) {
+        if (this.pentagonSize == valueSmall) {
             speedFactor = 1.8; // Fast speed
-        } else if (this.pentagonSize == 20) {
+        } else if (this.pentagonSize == valueMedium) {
             speedFactor = 1.5; // Medium speed
-        } else if (this.pentagonSize == 30) {
+        } else if (this.pentagonSize == valueLarge) {
             speedFactor = 1.0; // Slow speed (default)
         }
 
