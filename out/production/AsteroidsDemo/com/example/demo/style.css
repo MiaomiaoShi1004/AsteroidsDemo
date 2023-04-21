@@ -1,0 +1,94 @@
+/* Start screen */
+.start-screen,
+.layout {
+    -fx-background-color: #000000;
+    -fx-alignment: center;
+}
+
+.high-score-box,
+.game-over{
+	-fx-alignment: center;
+	-fx-padding:10px;
+}
+
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #45a049;
+    -fx-font-family: "Roboto";
+    -fx-alignment: center;
+}
+
+.name-input {
+    -fx-background-color: #000000;
+    -fx-border-color: #45a049;
+    -fx-max-width: 200px;
+    -fx-text-fill: #ffffff;
+}
+
+.name-input-label{
+	-fx-text-fill: #ffffff
+}
+
+.start-button {
+    -fx-background-color: #000000;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #4CAF50;
+    -fx-font-weight: bold;
+}
+
+.start-button:hover {
+    -fx-background-color: #45a049;
+    -fx-border-color: #45a049;
+}
+
+.high-score-label{
+	-fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #45a049;
+    -fx-font-family: "Roboto";
+}
+
+.high-score-entry{
+	-fx-text-fill: #ffffff
+}
+
+.game-background {
+    -fx-background-color: #000000;
+}
+
+.score-label,
+.life-label,
+.time-label {
+    -fx-text-fill: #45a049;
+    -fx-font-weight: bold;
+    -fx-border-color: #45a049;
+    -fx-padding: 5px;
+}
+
+.gm-score-label{
+	-fx-alignment: center;
+	-fx-text-fill: #45a049;
+    -fx-font-weight: bold;
+    -fx-border-color: #45a049;
+    -fx-padding: 5px;
+}
+
+.restart-label{
+	-fx-text-fill: #ffffff;
+	-fx-font-weight: bold;
+	-fx-alignment: center;
+}
+
+.ship,
+.asteroid,
+.alien,
+.projectile {
+	-fx-fill: #ffffff;
+}
+
+.red{
+	-fx-fill: red;
+}
+
+
