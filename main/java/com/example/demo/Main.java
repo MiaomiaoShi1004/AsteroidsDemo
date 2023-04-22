@@ -54,9 +54,10 @@ public class Main extends Application {
 	    String upArrow = "\u2191";
         String leftArrow = "\u2190";
         String rightArrow = "\u2192";
+        String downArrow = "\u2193";
 	    
         // Controls label
-	    Label controls = new Label(upArrow + "= Accelerate\n" + leftArrow + "= Turn Left\n" + rightArrow + "= Turn Right\n" + "SPACE = Shoot\n" + "H = Hyper Jumper");
+	    Label controls = new Label(upArrow + "= Accelerate\n" + leftArrow + "= Turn Left\n" + rightArrow + "= Turn Right\n" + downArrow + "= Decelerate\n" + "SPACE = Shoot\n" + "H = Hyper Jumper");
 	    controls.getStyleClass().add("controls");
 	    
 	    // Game rules label

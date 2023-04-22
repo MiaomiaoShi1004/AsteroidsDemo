@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
-import javafx.util.Duration;
 
 import java.util.Random;
 
