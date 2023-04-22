@@ -53,6 +53,7 @@ public abstract class Character {
         this.character.setRotate(this.character.getRotate() + 5);
     }
 
+
     public void move() {
         this.character.setTranslateX(this.character.getTranslateX() + this.movement.getX());
         this.character.setTranslateY(this.character.getTranslateY() + this.movement.getY());
@@ -66,7 +67,7 @@ public abstract class Character {
         }
 
         if (this.character.getTranslateY() < 0) {
-            this.character.setTranslateY(this.character.getTranslateX() + Main.HEIGHT);
+            this.character.setTranslateY(this.character.getTranslateY() + Main.HEIGHT);
         }
         if (this.character.getTranslateY() > Main.HEIGHT) {
             this.character.setTranslateY(this.character.getTranslateY() % Main.HEIGHT);
