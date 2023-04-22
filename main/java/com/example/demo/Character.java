@@ -65,7 +65,7 @@ public abstract class Character {
         if (this.character.getTranslateX() > Main.WIDTH) {
             this.character.setTranslateX(this.character.getTranslateX() % Main.WIDTH);
         }
-
+//
         if (this.character.getTranslateY() < 0) {
             this.character.setTranslateY(this.character.getTranslateY() + Main.HEIGHT);
         }
